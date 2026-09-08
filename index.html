@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- A1 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Courier+Prime:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<title>Ticket de Caisse Casino</title>
+<style>
+:root{
+  --paper:#E9EBE6;
+  --surface:#FBFBF8;
+  --surface-2:#F1F2EC;
+  --ink:#171412;
+  --ink-2:#4C4942;
+  --ink-3:#7D7A71;
+  --line:#D4D6CE;
+  --line-fort:#B9BCB2;
+  --rouge:#C8102E;
+  --rouge-fonce:#980C22;
+  --sur-rouge:#FFF4F1;
+  --vert:#1D7A54;
+  --vert-fond:#E4F0E9;
+  --brique:#8A2C1F;
+  --brique-fond:#F7E7E3;
+  --ambre:#8A6400;
+  --ticket:#FCFBF6;
+  --ticket-ink:#211F1B;
+  --ticket-pale:#6E6A5F;
+  --ticket-ombre:rgba(23,20,18,.16);
+  --focus:#0B63C5;
+  --rail-fond:#C8102E;
+  --rail-encre:#FFF6F4;
+  --rail-bord:#980C22;
+  --sur-accent:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#151714;
+    --surface:#1D201C;
+    --surface-2:#252923;
+    --ink:#EDEEE7;
+    --ink-2:#B5B8AE;
+    --ink-3:#87897F;
+    --line:#31352F;
+    --line-fort:#464B43;
+    --rouge:#FF6072;
+    --rouge-fonce:#FF8B98;
+    --sur-rouge:#2A1A1B;
+    --vert:#5BC793;
+    --vert-fond:#16281F;
+    --brique:#EE8C77;
+    --brique-fond:#2B1A16;
+    --ambre:#E0B75A;
+    --ticket:#E8E5DB;
+    --ticket-ink:#211F1B;
+    --ticket-pale:#6B6759;
+    --ticket-ombre:rgba(0,0,0,.55);
+    --rail-fond:#3C1219;
+    --rail-encre:#FFDDE1;
+    --rail-bord:#571A24;
+    --sur-accent:#2B0910;
+    --focus:#79B8FF;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151714;
+  --surface:#1D201C;
+  --surface-2:#252923;
+  --ink:#EDEEE7;
+  --ink-2:#B5B8AE;
+  --ink-3:#87897F;
+  --line:#31352F;
+  --line-fort:#464B43;
+  --rouge:#FF6072;
+  --rouge-fonce:#FF8B98;
+  --sur-rouge:#2A1A1B;
+  --vert:#5BC793;
+  --vert-fond:#16281F;
+  --brique:#EE8C77;
+  --brique-fond:#2B1A16;
+  --ambre:#E0B75A;
+  --ticket:#E8E5DB;
+  --ticket-ink:#211F1B;
+  --ticket-pale:#6B6759;
+  --ticket-ombre:rgba(0,0,0,.55);
+  --rail-fond:#3C1219;
+  --rail-encre:#FFDDE1;
+  --rail-bord:#571A24;
+  --sur-accent:#2B0910;
+  --focus:#79B8FF;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Newsreader",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,button,.mono,.etiq,.chip{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif}
+.mono,.ticket,.nb{font-family:"Courier Prime","Courier New",monospace}
+h1,h2,h3{text-wrap:balance;margin:0}
+:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:3px}
+
+/* ---------- rail d'en-tête ---------- */
+.rail{background:var(--rail-fond);color:var(--rail-encre);border-bottom:3px solid var(--rail-bord)}
+.rail-in{max-width:1180px;margin:0 auto;padding:1.15rem 1.4rem 1.25rem;display:flex;flex-wrap:wrap;gap:.9rem 2rem;align-items:flex-end;justify-content:space-between}
+.eyebrow{font-family:"Bricolage Grotesque",sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.82;display:block;margin-bottom:.25rem}
+.rail h1{font-size:clamp(1.5rem,4.4vw,2.15rem);font-weight:800;letter-spacing:-.018em;line-height:1.05}
+.rail .sous{font-size:.94rem;margin:.3rem 0 0;max-width:46ch;opacity:.92;font-style:italic}
+.caisse-num{font-family:"Courier Prime",monospace;font-size:.78rem;letter-spacing:.06em;text-align:right;opacity:.9;white-space:nowrap}
+.caisse-num b{display:block;font-size:1.35rem;letter-spacing:.02em}
+
+/* ---------- gondole de progression ---------- */
+.gondole{background:var(--surface-2);border-bottom:1px solid var(--line)}
+.gondole-in{max-width:1180px;margin:0 auto;padding:.55rem 1.4rem;display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:thin}
+.etiq{
+  flex:0 0 auto;display:flex;align-items:baseline;gap:.42rem;
+  padding:.3rem .6rem;border:1px solid var(--line-fort);border-radius:2px;
+  background:var(--surface);color:var(--ink-3);
+  font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;
+}
+.etiq i{font-style:normal;font-family:"Courier Prime",monospace;font-weight:700}
+.etiq[data-etat="courant"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.etiq[data-etat="fait"]{color:var(--vert);border-color:var(--vert);background:var(--vert-fond)}
+
+/* ---------- plateau ---------- */
+.board{max-width:1180px;margin:0 auto;padding:1.6rem 1.4rem 4rem;display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:2.2rem;align-items:start}
+@media (max-width:900px){.board{grid-template-columns:minmax(0,1fr);gap:1.6rem}}
+
+.play{min-width:0;display:flex;flex-direction:column;gap:1.15rem}
+.carte{background:var(--surface);border:1px solid var(--line);padding:1.5rem 1.6rem 1.6rem}
+@media (max-width:520px){.carte{padding:1.15rem 1rem 1.25rem}}
+.carte-tete{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:baseline;justify-content:space-between;margin-bottom:.2rem}
+.rayon-no{font-family:"Courier Prime",monospace;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--rouge)}
+.pts-max{font-family:"Courier Prime",monospace;font-size:.75rem;color:var(--ink-3);letter-spacing:.04em}
+.carte h2{font-size:clamp(1.3rem,3.2vw,1.72rem);font-weight:800;letter-spacing:-.02em;margin:.1rem 0 .45rem}
+.consigne{margin:0 0 1.15rem;color:var(--ink-2);max-width:62ch}
+.consigne em{color:var(--ink);font-style:italic}
+
+/* ---------- listes de réponses ---------- */
+.opts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.opt{
+  display:flex;gap:.8rem;align-items:flex-start;width:100%;text-align:left;
+  padding:.7rem .85rem;background:var(--surface-2);border:1px solid var(--line);
+  color:inherit;font:inherit;cursor:pointer;transition:border-color .12s,background .12s;
+}
+.opt:hover:not(:disabled){border-color:var(--ink-3)}
+.opt .case{
+  flex:0 0 auto;width:1.15rem;height:1.15rem;margin-top:.24rem;border:1.5px solid var(--line-fort);
+  background:var(--surface);display:grid;place-items:center;font-size:.8rem;line-height:1;color:transparent;
+  font-family:"Courier Prime",monospace;font-weight:700;
+}
+.opt[aria-pressed="true"]{background:var(--sur-rouge);border-color:var(--rouge)}
+.opt[aria-pressed="true"] .case{border-color:var(--rouge);color:var(--rouge)}
+.opt:disabled{cursor:default;opacity:1}
+.opt[data-verdict="juste"]{background:var(--vert-fond);border-color:var(--vert)}
+.opt[data-verdict="juste"] .case{border-color:var(--vert);color:var(--vert)}
+.opt[data-verdict="rate"]{background:var(--brique-fond);border-color:var(--brique)}
+.opt[data-verdict="rate"] .case{border-color:var(--brique);color:var(--brique)}
+.opt .lib{flex:1 1 auto}
+.opt .verdict{margin-left:auto;flex:0 0 auto;font-family:"Bricolage Grotesque",sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding-top:.3rem}
+.opt[data-verdict="juste"] .verdict{color:var(--vert)}
+.opt[data-verdict="rate"] .verdict{color:var(--brique)}
+
+/* ---------- tri des enseignes ---------- */
+.tri{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.45rem}
+.tri li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.75rem;align-items:center;padding:.5rem .55rem .5rem .85rem;background:var(--surface-2);border:1px solid var(--line)}
+@media (max-width:560px){.tri li{grid-template-columns:minmax(0,1fr);gap:.5rem}}
+.enseigne{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.02rem;letter-spacing:-.01em}
+.enseigne small{display:block;font-family:"Newsreader",serif;font-weight:400;font-size:.82rem;color:var(--ink-3);letter-spacing:0}
+.segm{display:flex;border:1px solid var(--line-fort);background:var(--surface)}
+.segm button{
+  font-family:"Bricolage Grotesque",sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:.42rem .7rem;background:transparent;border:0;color:var(--ink-3);cursor:pointer;white-space:nowrap;
+}
+.segm button + button{border-left:1px solid var(--line-fort)}
+.segm button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.segm button:disabled{cursor:default}
+.tri li[data-verdict="juste"]{background:var(--vert-fond);border-color:var(--vert)}
+.tri li[data-verdict="rate"]{background:var(--brique-fond);border-color:var(--brique)}
+.tri li[data-verdict="rate"] .segm button[aria-pressed="true"]{background:var(--brique);color:var(--sur-accent)}
+.tri li[data-verdict="juste"] .segm button[aria-pressed="true"]{background:var(--vert);color:var(--sur-accent)}
+
+/* ---------- curseurs chiffre d'affaires ---------- */
+.curseurs{display:flex;flex-direction:column;gap:1.4rem}
+.curseur h3{font-size:.98rem;font-weight:700;letter-spacing:-.005em;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;justify-content:space-between}
+.curseur h3 output{font-family:"Courier Prime",monospace;font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--rouge)}
+.curseur input[type=range]{width:100%;margin:.5rem 0 .2rem;accent-color:var(--rouge);height:1.6rem}
+.bornes{display:flex;justify-content:space-between;font-family:"Courier Prime",monospace;font-size:.72rem;color:var(--ink-3)}
+.jauge{display:flex;flex-direction:column;gap:.55rem;margin-top:1.1rem;padding-top:1.1rem;border-top:1px dashed var(--line-fort)}
+.barre{display:grid;grid-template-columns:5.5rem minmax(0,1fr);gap:.7rem;align-items:center;font-family:"Courier Prime",monospace;font-size:.8rem}
+.barre .piste{height:1.5rem;background:var(--surface-2);border:1px solid var(--line);position:relative}
+.barre .remplissage{position:absolute;inset:0 auto 0 0;background:var(--rouge);display:flex;align-items:center;justify-content:flex-end;padding-right:.45rem;color:var(--sur-accent);font-weight:700;font-size:.74rem;transition:width .5s ease}
+@media (prefers-reduced-motion:reduce){.barre .remplissage{transition:none}}
+.barre.b2025 .remplissage{background:var(--ink-3)}
+.chute{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.05rem;color:var(--brique);letter-spacing:-.01em}
+
+/* ---------- étiquettes valeurs / RSE ---------- */
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;padding:0;margin:0;list-style:none}
+.chip{
+  padding:.5rem .85rem;border:1.5px solid var(--line-fort);background:var(--surface-2);
+  font-size:.86rem;font-weight:700;letter-spacing:-.005em;color:var(--ink-2);cursor:pointer;border-radius:999px;
+  transition:border-color .12s,background .12s,color .12s;
+}
+.chip:hover:not(:disabled){border-color:var(--ink-3)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip:disabled{cursor:default}
+.chip[data-verdict="juste"]{background:var(--vert-fond);border-color:var(--vert);color:var(--vert)}
+.chip[data-verdict="rate"]{background:var(--brique-fond);border-color:var(--brique);color:var(--brique);text-decoration:line-through}
+.compteur-tags{font-family:"Courier Prime",monospace;font-size:.78rem;color:var(--ink-3);margin:.85rem 0 0}
+
+/* ---------- chronologie ---------- */
+.chrono{list-style:none;margin:0;padding:0;counter-reset:etape;display:flex;flex-direction:column;gap:.45rem}
+.chrono li{display:grid;grid-template-columns:2.1rem minmax(0,1fr) auto;gap:.75rem;align-items:center;padding:.6rem .55rem .6rem .7rem;background:var(--surface-2);border:1px solid var(--line)}
+.chrono .rang{font-family:"Courier Prime",monospace;font-weight:700;font-size:1.1rem;color:var(--rouge);text-align:center}
+.chrono .evt b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.chrono .evt span{font-size:.95rem;line-height:1.4;display:block}
+.fleches{display:flex;flex-direction:column;gap:2px}
+.fleches button{width:1.9rem;height:1.35rem;border:1px solid var(--line-fort);background:var(--surface);color:var(--ink-2);cursor:pointer;font-size:.7rem;line-height:1;display:grid;place-items:center}
+.fleches button:hover:not(:disabled){background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fleches button:disabled{opacity:.3;cursor:default}
+.chrono li[data-verdict="juste"]{background:var(--vert-fond);border-color:var(--vert)}
+.chrono li[data-verdict="juste"] .rang{color:var(--vert)}
+.chrono li[data-verdict="rate"]{background:var(--brique-fond);border-color:var(--brique)}
+.chrono li[data-verdict="rate"] .rang{color:var(--brique)}
+
+/* ---------- correction ---------- */
+.correction{margin-top:1.35rem;padding:1.05rem 1.15rem;background:var(--surface-2);border-left:3px solid var(--rouge)}
+.correction h3{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--rouge);margin-bottom:.4rem}
+.correction p{margin:0 0 .6rem;max-width:64ch}
+.correction p:last-child{margin-bottom:0}
+.repere{font-style:italic;color:var(--ink-2);font-size:.93rem;padding-left:.85rem;border-left:1px solid var(--line-fort)}
+.repere .intitule{font-style:normal;font-family:"Bricolage Grotesque",sans-serif;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ambre);display:block;margin-bottom:.12rem}
+.score-rayon{font-family:"Courier Prime",monospace;font-weight:700;font-size:1.05rem;margin:0 0 .7rem;color:var(--ink)}
+.score-rayon i{font-style:normal;font-size:.78rem;color:var(--ink-3);font-weight:400}
+
+/* ---------- boutons ---------- */
+.actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.35rem;align-items:center}
+.btn{
+  font-family:"Bricolage Grotesque",sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:.72rem 1.35rem;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.btn:hover:not(:disabled){background:var(--rouge);border-color:var(--rouge);color:var(--sur-accent)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.creux{background:transparent;color:var(--ink);border-color:var(--line-fort)}
+.btn.creux:hover:not(:disabled){background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.rouge{background:var(--rouge);border-color:var(--rouge);color:var(--sur-accent)}
+.btn.rouge:hover:not(:disabled){background:var(--rouge-fonce);border-color:var(--rouge-fonce);color:var(--sur-accent)}
+.aide{font-size:.85rem;color:var(--ink-3);font-style:italic}
+
+/* ---------- accueil ---------- */
+.accueil h2{font-size:clamp(1.6rem,4.2vw,2.3rem);font-weight:800;letter-spacing:-.025em;margin-bottom:.6rem}
+.accueil > p{max-width:60ch;color:var(--ink-2);margin:0 0 1.3rem}
+.sommaire{list-style:none;margin:0 0 1.5rem;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.sommaire li{background:var(--surface);padding:.85rem .95rem}
+.sommaire b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:.95rem;font-weight:700;letter-spacing:-.01em;margin:.15rem 0 .1rem}
+.sommaire span{font-family:"Courier Prime",monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--rouge)}
+.sommaire em{font-size:.82rem;color:var(--ink-3);font-style:normal}
+
+/* ---------- ticket de caisse ---------- */
+.ticket-col{position:sticky;top:1.2rem}
+@media (max-width:900px){.ticket-col{position:static}}
+.ticket{
+  background:var(--ticket);color:var(--ticket-ink);
+  font-family:"Courier Prime","Courier New",monospace;font-size:.79rem;line-height:1.55;
+  padding:1.5rem 1.15rem 0;box-shadow:0 3px 14px var(--ticket-ombre);
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.04));
+}
+.ticket-col::after{
+  content:"";display:block;height:12px;background:var(--ticket);box-shadow:0 3px 10px var(--ticket-ombre);
+  -webkit-mask-image:radial-gradient(circle at 6px 0,transparent 5px,#000 5.5px);
+  mask-image:radial-gradient(circle at 6px 0,transparent 5px,#000 5.5px);
+  -webkit-mask-size:12px 12px;mask-size:12px 12px;-webkit-mask-repeat:repeat-x;mask-repeat:repeat-x;
+}
+.ticket .entete{text-align:center;line-height:1.35}
+.ticket .marque{font-weight:700;font-size:1.02rem;letter-spacing:.22em;display:block}
+.ticket .ss-marque{font-size:.68rem;letter-spacing:.12em;color:var(--ticket-pale);display:block;margin-top:.15rem}
+.ticket hr{border:0;border-top:1px dashed var(--ticket-pale);margin:.85rem 0;opacity:.7}
+.ticket .meta{display:flex;justify-content:space-between;font-size:.7rem;color:var(--ticket-pale);letter-spacing:.02em}
+.ticket .lignes{display:flex;flex-direction:column;gap:.35rem;margin:0;padding:0;list-style:none;min-height:6.5rem}
+.ticket .ligne{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.4rem;align-items:baseline}
+.ticket .ligne .lib{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ticket .ligne .val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ticket .ligne.attente{color:var(--ticket-pale)}
+.ticket .ligne.attente .val{font-weight:400}
+.ticket .total{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.4rem;font-weight:700;font-size:1.02rem;letter-spacing:.04em}
+.ticket .mention{text-align:center;font-size:.74rem;letter-spacing:.13em;margin-top:.5rem;padding:.35rem 0;border:1px solid var(--ticket-pale)}
+.ticket .pied{text-align:center;font-size:.68rem;letter-spacing:.1em;color:var(--ticket-pale);padding-bottom:1.3rem}
+.codebarres{display:flex;align-items:flex-end;gap:1px;height:44px;margin:1.1rem 0 .4rem;justify-content:center}
+.codebarres:empty{display:none}
+.codebarres i{display:block;background:var(--ticket-ink);height:100%}
+.codebarres-txt{text-align:center;font-size:.72rem;letter-spacing:.35em;color:var(--ticket-ink);margin-bottom:1.2rem}
+
+/* ---------- fiche finale ---------- */
+.bilan{display:flex;flex-wrap:wrap;gap:1.4rem;align-items:baseline;justify-content:space-between;margin-bottom:.4rem}
+.note-finale{font-family:"Courier Prime",monospace;font-weight:700;font-size:clamp(2.6rem,9vw,3.8rem);line-height:1;color:var(--rouge);font-variant-numeric:tabular-nums}
+.note-finale small{font-size:.34em;color:var(--ink-3);letter-spacing:.05em}
+.grade{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.15rem;letter-spacing:-.015em;text-align:right}
+.grade span{display:block;font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.fiche{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);margin-top:1.5rem;background:var(--line)}
+.rub{margin:0;background:var(--surface);padding:1rem 1.15rem;display:grid;grid-template-columns:11.5rem minmax(0,1fr);gap:.4rem 1.3rem}
+@media (max-width:640px){.rub{grid-template-columns:minmax(0,1fr);gap:.3rem}}
+.rub + .rub{margin-top:1px}
+.rub dt{font-family:"Bricolage Grotesque",sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--rouge);padding-top:.2rem}
+.rub dd{margin:0;max-width:62ch}
+.rub dd p{margin:0 0 .5rem}
+.rub dd p:last-child{margin:0}
+.liste-enseignes{display:flex;flex-wrap:wrap;gap:.4rem;margin:.15rem 0 0;padding:0;list-style:none}
+.liste-enseignes li{font-family:"Bricolage Grotesque",sans-serif;font-size:.78rem;font-weight:700;padding:.22rem .6rem;border:1px solid var(--line-fort);border-radius:999px;background:var(--surface-2)}
+.liste-enseignes.sortante li{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--brique)}
+.duo-ca{display:flex;flex-wrap:wrap;gap:.4rem 2rem;font-family:"Courier Prime",monospace;align-items:baseline}
+.duo-ca b{font-size:1.35rem;font-variant-numeric:tabular-nums}
+.duo-ca em{font-style:normal;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);display:block}
+.duo-ca .delta{color:var(--brique);font-weight:700}
+.avert{max-width:1180px;margin:0 auto;padding:0 1.4rem 3rem;font-size:.8rem;color:var(--ink-3);font-style:italic}
+.avert p{max-width:78ch;margin:0 auto}
+</style>
+</head>
+<body>
+<!-- A2 -->
+<!-- A3 -->
+<header class="rail">
+  <div class="rail-in">
+    <div>
+      <span class="eyebrow">Simulateur — fiche d&rsquo;identité d&rsquo;entreprise</span>
+      <h1>Groupe Casino, passage en caisse</h1>
+      <p class="sous">Six rayons à franchir. À chaque bonne réponse, le ticket s&rsquo;imprime. À l&rsquo;arrivée, vous repartez avec la fiche complète.</p>
+    </div>
+    <div class="caisse-num" aria-hidden="true">Caisse n°<b>07</b></div>
+  </div>
+</header>
+
+<nav class="gondole" aria-label="Progression dans les rayons">
+  <div class="gondole-in" id="gondole"></div>
+</nav>
+
+<main class="board">
+  <section class="play" id="play" aria-live="polite"></section>
+
+  <aside class="ticket-col" aria-label="Ticket de caisse">
+    <div class="ticket">
+      <div class="entete">
+        <span class="marque">CASINO</span>
+        <span class="ss-marque">FICHE D&rsquo;IDENTITÉ — EXERCICE</span>
+      </div>
+      <hr>
+      <div class="meta"><span id="tk-date">&nbsp;</span><span id="tk-heure">&nbsp;</span></div>
+      <hr>
+      <ul class="lignes" id="tk-lignes"></ul>
+      <hr>
+      <div class="total"><span>TOTAL</span><span id="tk-total">0,00 /100</span></div>
+      <div class="mention" id="tk-mention">EN COURS DE SAISIE</div>
+      <div class="codebarres" id="tk-barres" aria-hidden="true"></div>
+      <div class="codebarres-txt" id="tk-code">— — — — —</div>
+      <div class="pied">MERCI DE VOTRE VISITE</div>
+    </div>
+  </aside>
+</main>
+
+<div class="avert">
+  <p>Exercice pédagogique réalisé à partir de données de cours. Cette page n&rsquo;est ni éditée ni approuvée par le Groupe Casino et ne reproduit aucun de ses éléments de marque. Les chiffres cités sont des ordres de grandeur à vérifier dans les documents financiers de l&rsquo;entreprise.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const el=(t,c,txt)=>{const n=document.createElement(t);if(c)n.className=c;if(txt!=null)n.textContent=txt;return n;};
+const fr=n=>n.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fr1=n=>n.toLocaleString("fr-FR",{minimumFractionDigits:1,maximumFractionDigits:1});
+
+/* ====================== CONTENU ====================== */
+const RAYONS=[
+{
+  id:"secteur",nom:"Secteur & positionnement",court:"Secteur",max:15,type:"qcm",
+  consigne:"Cochez chaque affirmation exacte. Une case oubliée coûte autant qu’une case en trop.",
+  items:[
+    {t:"Le groupe relève de la grande distribution alimentaire.",ok:true},
+    {t:"Son positionnement est aujourd’hui recentré exclusivement sur le commerce de proximité.",ok:true},
+    {t:"Sa priorité stratégique est l’ouverture de nouveaux hypermarchés.",ok:false},
+    {t:"Les magasins de centre-ville et de quartier sont au cœur du modèle.",ok:true},
+    {t:"Le groupe s’est repositionné sur le luxe et la parfumerie.",ok:false},
+    {t:"C’est un acteur du commerce de détail, en contact direct avec le consommateur final.",ok:true}
+  ],
+  correction:"Casino, c’est la grande distribution alimentaire — mais avec un positionnement stratégique profondément transformé : le groupe s’est recentré <b>exclusivement sur le commerce de proximité</b>, c’est-à-dire les formats de quartier et de centre-ville, au détriment des grandes surfaces périphériques.",
+  repere:"Retenez le mot « exclusivement » : c’est lui qui distingue le Casino d’aujourd’hui de celui d’avant 2024, qui couvrait tous les formats, de l’hypermarché à la supérette."
+},
+{
+  id:"enseignes",nom:"Le portefeuille d’enseignes",court:"Enseignes",max:24,type:"tri",
+  consigne:"Classez chaque enseigne : figurait-elle au portefeuille <em>avant 2024</em>, ou relève-t-elle du périmètre <em>depuis 2025-2026</em> ?",
+  cols:[{k:"avant",lab:"Avant 2024"},{k:"depuis",lab:"Depuis 2025-26"}],
+  items:[
+    {n:"Géant",d:"Hypermarchés",p:"avant"},
+    {n:"Monoprix",d:"Grands magasins de centre-ville",p:"avant"},
+    {n:"Casino",d:"Supermarchés à l’enseigne historique",p:"avant"},
+    {n:"Franprix",d:"Supérettes urbaines",p:"avant"},
+    {n:"Spar",d:"Proximité, souvent en franchise",p:"avant"},
+    {n:"Cdiscount",d:"Commerce en ligne",p:"depuis"},
+    {n:"Vival",d:"Proximité de village et de quartier",p:"depuis"},
+    {n:"Naturalia",d:"Bio et alimentation naturelle",p:"depuis"}
+  ],
+  correction:"Avant 2024, le groupe alignait <b>Géant, Monoprix, Casino, Franprix et Spar</b> : toute la gamme des formats. Depuis 2025-2026, la fiche d’identité met en avant <b>Cdiscount, Vival et Naturalia</b> — un portefeuille resserré, tourné vers la proximité et le e-commerce.",
+  repere:"Le basculement n’est pas cosmétique : il traduit la cession des formats les plus lourds (hypermarchés, grands magasins) pour ne conserver que ce qui sert la stratégie de proximité. Vérifiez auprès de votre enseignant le périmètre exact retenu pour votre dossier, certaines enseignes de proximité restant dans le groupe."
+},
+{
+  id:"ca",nom:"Le chiffre d’affaires",court:"Chiffre d’affaires",max:16,type:"curseurs",
+  consigne:"Positionnez les deux curseurs. Vous marquez le maximum à moins de 0,5 Md€ de la cible, la moitié à moins de 1,5 Md€.",
+  jauges:[
+    {k:"avant",lab:"CA 2022-2023, avant la restructuration",cible:9.4,min:0,max:15,pas:.1},
+    {k:"apres",lab:"CA 2025, après la restructuration",cible:1.4,min:0,max:15,pas:.1}
+  ],
+  correction:"Environ <b>9,4 milliards d’euros</b> en 2022-2023, contre <b>1,4 milliard</b> en 2025 : une chute d’environ <b>85 %</b> du chiffre d’affaires en deux exercices.",
+  repere:"Cette chute ne mesure pas d’abord un effondrement des ventes magasin par magasin : elle vient surtout du <b>changement de périmètre</b>. Un groupe qui cède ses hypermarchés et ses grands magasins cesse d’en consolider le chiffre d’affaires. C’est la nuance qui fait la différence dans une analyse."
+},
+{
+  id:"valeurs",nom:"Les valeurs de l’enseigne",court:"Valeurs",max:16,type:"tags",
+  consigne:"Quatre valeurs revendiquées se cachent parmi ces huit étiquettes. Sélectionnez-les.",
+  attendu:4,
+  items:[
+    {t:"Intégrité",ok:true},{t:"Rentabilité maximale",ok:false},
+    {t:"Équité",ok:true},{t:"Discrétion",ok:false},
+    {t:"Honnêteté",ok:true},{t:"Compétition interne",ok:false},
+    {t:"Qualité de service",ok:true},{t:"Audace",ok:false}
+  ],
+  correction:"Les quatre valeurs affichées par l’enseigne sont <b>l’intégrité, l’équité, l’honnêteté et la qualité de service</b>.",
+  repere:"Trois de ces quatre valeurs relèvent de l’éthique des affaires, la quatrième du service au client. C’est un discours de <b>confiance</b> — cohérent avec un groupe qui a dû rassurer clients, salariés et créanciers après la crise."
+},
+{
+  id:"rse",nom:"La politique RSE",court:"RSE",max:16,type:"tags",
+  consigne:"La démarche RSE du groupe s’articule autour de quatre piliers. Retrouvez-les parmi ces thèmes.",
+  attendu:4,
+  items:[
+    {t:"Proximité",ok:true},{t:"Biodiversité marine",ok:false},
+    {t:"Climat",ok:true},{t:"Mécénat culturel",ok:false},
+    {t:"Nutrition",ok:true},{t:"Numérique responsable",ok:false},
+    {t:"Solidarités",ok:true},{t:"Mobilité électrique",ok:false}
+  ],
+  correction:"La politique RSE s’articule autour de quatre axes : <b>la proximité, le climat, la nutrition et les solidarités</b>.",
+  repere:"Notez la symétrie avec le positionnement : la <b>proximité</b> est à la fois le modèle commercial et le premier pilier RSE. Chez un distributeur alimentaire, la RSE crédible se joue dans l’assiette (nutrition), sur le territoire (proximité, solidarités) et dans la chaîne du froid et du transport (climat)."
+},
+{
+  id:"crise",nom:"La restructuration de 2024",court:"Restructuration",max:13,type:"chrono",
+  consigne:"Remettez les quatre étapes dans l’ordre chronologique, de la plus ancienne à la plus récente.",
+  items:[
+    {d:"2023",t:"La crise : dette lourde, pertes et perte de vitesse commerciale fragilisent le groupe."},
+    {d:"Courant 2023",t:"Négociations avec les créanciers et recherche de repreneurs pour recapitaliser le groupe."},
+    {d:"Mars 2024",t:"La restructuration financière se concrétise : passage officiel sous le contrôle de nouveaux repreneurs."},
+    {d:"Depuis 2024",t:"Transformation stratégique et financière : recentrage sur la proximité, cessions d’actifs, nouveau modèle."}
+  ],
+  correction:"La restructuration financière, <b>initiée par la crise de 2023</b>, s’est concrétisée en <b>mars 2024</b> par le passage officiel du groupe sous le contrôle de <b>nouveaux repreneurs</b>. Depuis, le groupe mène une profonde transformation stratégique et financière.",
+  repere:"Une restructuration n’est pas un événement, c’est une séquence : crise → négociation → changement de contrôle → transformation. Dans un dossier, c’est cet enchaînement qu’on attend de vous, pas la seule date de mars 2024."
+}
+];
+
+const MENTIONS=[
+  {min:90,t:"Direction générale",s:"Mention excellente"},
+  {min:75,t:"Chef de rayon confirmé",s:"Mention bien"},
+  {min:60,t:"Employé polyvalent",s:"Mention assez bien"},
+  {min:35,t:"Première journée en rayon",s:"Passable"},
+  {min:0, t:"Stagiaire, à revoir",s:"Insuffisant"}
+];
+
+/* ====================== ÉTAT ====================== */
+const S={ecran:"accueil",i:0,resultats:[],debut:null,revision:false};
+const play=$("#play");
+
+const totalPts=()=>S.resultats.reduce((a,r)=>a+r.pts,0);
+const mentionDe=n=>MENTIONS.find(m=>n>=m.min);
+
+/* ====================== GONDOLE ====================== */
+function rendreGondole(){
+  const g=$("#gondole");g.textContent="";
+  RAYONS.forEach((r,k)=>{
+    const e=el("span","etiq");
+    e.appendChild(el("i",null,String(k+1)));
+    e.appendChild(el("span",null,r.court));
+    const fait=S.resultats[k];
+    if(fait)e.dataset.etat="fait";
+    else if(S.ecran==="rayon"&&k===S.i)e.dataset.etat="courant";
+    if(fait)e.title=fr(fait.pts)+" / "+r.max+" points";
+    g.appendChild(e);
+  });
+}
+
+/* ====================== TICKET ====================== */
+function barres(graine){
+  const b=$("#tk-barres");b.textContent="";
+  let x=graine*2654435761%2147483647||123456789;
+  for(let i=0;i<44;i++){
+    x=(x*1103515245+12345)%2147483648;
+    const large=(x>>7)%3;
+    const t=el("i");
+    t.style.width=(large===0?1:large===1?2:4)+"px";
+    t.style.height=(80+((x>>11)%21))+"%";
+    if((x>>5)%3===0)t.style.background="transparent";
+    b.appendChild(t);
+  }
+}
+function duree(){
+  if(!S.debut)return "--:--";
+  const s=Math.round((Date.now()-S.debut)/1000);
+  return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+}
+function rendreTicket(){
+  const ul=$("#tk-lignes");ul.textContent="";
+  RAYONS.forEach((r,k)=>{
+    const res=S.resultats[k];
+    const li=el("li","ligne"+(res?"":" attente"));
+    li.appendChild(el("span","lib",(k+1)+" "+r.court.toUpperCase()));
+    li.appendChild(el("span","val",res?fr(res.pts):"-- , --"));
+    ul.appendChild(li);
+  });
+  if(S.ecran==="fiche"){
+    const li=el("li","ligne attente");
+    li.appendChild(el("span","lib","DURÉE DU PASSAGE"));
+    li.appendChild(el("span","val",duree()));
+    ul.appendChild(li);
+  }
+  const t=totalPts();
+  $("#tk-total").textContent=fr(t)+" /100";
+  const fini=S.ecran==="fiche";
+  $("#tk-mention").textContent=fini?mentionDe(t).t.toUpperCase():(S.ecran==="accueil"?"EN ATTENTE DE PASSAGE":"EN COURS DE SAISIE");
+  if(fini){
+    barres(Math.round(t)+7);
+    $("#tk-code").textContent="CAS-"+String(Math.round(t)).padStart(3,"0")+"-26";
+  }else{
+    $("#tk-barres").textContent="";
+    $("#tk-code").textContent="— — — — —";
+  }
+}
+function horodater(){
+  const d=new Date();
+  $("#tk-date").textContent=d.toLocaleDateString("fr-FR");
+  $("#tk-heure").textContent=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+}
+
+/* ====================== ACCUEIL ====================== */
+function rendreAccueil(){
+  S.ecran="accueil";play.textContent="";
+  const c=el("section","carte accueil");
+  c.appendChild(el("span","rayon-no","Avant de commencer"));
+  c.appendChild(el("h2","","Reconstituez la fiche d’identité du Groupe Casino"));
+  c.appendChild(el("p","","Six rayons, cent points, un ticket de caisse. Chaque rayon correspond à une rubrique attendue dans un dossier d’entreprise : le secteur, les enseignes, les chiffres, les valeurs, la RSE et l’actualité. Répondez, validez, et la ligne s’imprime sur le ticket. Chaque correction vous donne la réponse attendue et le raisonnement qui va avec."));
+  const ol=el("ul","sommaire");
+  RAYONS.forEach((r,k)=>{
+    const li=el("li");
+    li.appendChild(el("span",null,"Rayon "+(k+1)));
+    li.appendChild(el("b",null,r.nom));
+    li.appendChild(el("em",null,r.max+" points"));
+    ol.appendChild(li);
+  });
+  c.appendChild(ol);
+  const act=el("div","actions");
+  const go=el("button","btn rouge","Passer en caisse");
+  go.type="button";go.addEventListener("click",()=>{S.debut=Date.now();S.i=0;S.resultats=[];S.revision=false;horodater();rendreRayon();});
+  const rev=el("button","btn creux","Mode révision");
+  rev.type="button";rev.addEventListener("click",()=>{S.revision=true;rendreFiche();});
+  act.appendChild(go);act.appendChild(rev);
+  act.appendChild(el("span","aide","Le mode révision affiche la fiche complète, sans jeu ni score."));
+  c.appendChild(act);
+  play.appendChild(c);
+  rendreGondole();rendreTicket();
+}
+
+/* ====================== BLOCS DE JEU ====================== */
+function blocQcm(r){
+  const sel=new Set(),btns=[],ul=el("ul","opts");
+  r.items.forEach((it,k)=>{
+    const li=el("li"),b=el("button","opt");
+    b.type="button";b.setAttribute("aria-pressed","false");
+    const box=el("span","case","");b.appendChild(box);
+    b.appendChild(el("span","lib",it.t));
+    b.addEventListener("click",()=>{
+      sel.has(k)?sel.delete(k):sel.add(k);
+      b.setAttribute("aria-pressed",sel.has(k)?"true":"false");
+      box.textContent=sel.has(k)?"×":"";
+      api.onChange();
+    });
+    btns.push(b);li.appendChild(b);ul.appendChild(li);
+  });
+  const api={noeud:ul,onChange:()=>{},
+    pret:()=>sel.size>0,
+    corriger(){
+      let bons=0;
+      r.items.forEach((it,k)=>{
+        const pris=sel.has(k),juste=pris===it.ok;
+        if(juste)bons++;
+        btns[k].disabled=true;
+        btns[k].dataset.verdict=juste?"juste":"rate";
+        btns[k].appendChild(el("span","verdict",it.ok?(pris?"exact":"oubliée"):(pris?"à écarter":"écartée")));
+      });
+      return r.max*bons/r.items.length;
+    }};
+  return api;
+}
+
+function blocTri(r){
+  const rep={},lignes=[],ul=el("ul","tri");
+  r.items.forEach((it,k)=>{
+    const li=el("li");
+    const g=el("div","enseigne");g.appendChild(document.createTextNode(it.n));
+    g.appendChild(el("small",null,it.d));
+    const seg=el("div","segm");seg.setAttribute("role","group");
+    seg.setAttribute("aria-label","Période de "+it.n);
+    const bs=r.cols.map(col=>{
+      const b=el("button",null,col.lab);b.type="button";b.setAttribute("aria-pressed","false");
+      b.addEventListener("click",()=>{
+        rep[k]=col.k;
+        bs.forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+        api.onChange();
+      });
+      seg.appendChild(b);return b;
+    });
+    li.appendChild(g);li.appendChild(seg);ul.appendChild(li);
+    lignes.push({li,bs});
+  });
+  const api={noeud:ul,onChange:()=>{},
+    pret:()=>Object.keys(rep).length===r.items.length,
+    corriger(){
+      let bons=0;
+      r.items.forEach((it,k)=>{
+        const juste=rep[k]===it.p;
+        if(juste)bons++;
+        lignes[k].li.dataset.verdict=juste?"juste":"rate";
+        lignes[k].bs.forEach(b=>b.disabled=true);
+        if(!juste){
+          const bon=r.cols.findIndex(c=>c.k===it.p);
+          lignes[k].bs[bon].style.boxShadow="inset 0 0 0 2px var(--vert)";
+        }
+      });
+      return r.max*bons/r.items.length;
+    }};
+  return api;
+}
+
+function blocCurseurs(r){
+  const box=el("div","curseurs"),champs=[];
+  r.jauges.forEach(j=>{
+    const w=el("div","curseur");
+    const h=el("h3");h.appendChild(el("span",null,j.lab));
+    const out=el("output");out.textContent=fr1((j.min+j.max)/2)+" Md€";
+    h.appendChild(out);w.appendChild(h);
+    const inp=document.createElement("input");
+    inp.type="range";inp.min=j.min;inp.max=j.max;inp.step=j.pas;inp.value=(j.min+j.max)/2;
+    inp.setAttribute("aria-label",j.lab+", en milliards d’euros");
+    inp.addEventListener("input",()=>{out.textContent=fr1(+inp.value)+" Md€";});
+    w.appendChild(inp);
+    const bo=el("div","bornes");
+    bo.appendChild(el("span",null,j.min+" Md€"));
+    bo.appendChild(el("span",null,j.max+" Md€"));
+    w.appendChild(bo);box.appendChild(w);
+    champs.push({j,inp,out});
+  });
+  const api={noeud:box,onChange:()=>{},pret:()=>true,
+    corriger(){
+      let pts=0;const par=r.max/r.jauges.length;
+      champs.forEach(({j,inp,out})=>{
+        const v=+inp.value,ecart=Math.abs(v-j.cible);
+        pts+=ecart<=.5?par:ecart<=1.5?par/2:0;
+        inp.disabled=true;
+        out.textContent=fr1(v)+" Md€ → "+fr1(j.cible)+" Md€";
+        out.style.color=ecart<=.5?"var(--vert)":ecart<=1.5?"var(--ambre)":"var(--brique)";
+      });
+      const jauge=el("div","jauge");
+      [{c:"",lab:"2022-23",v:9.4},{c:" b2025",lab:"2025",v:1.4}].forEach(b=>{
+        const l=el("div","barre"+b.c);
+        l.appendChild(el("span",null,b.lab));
+        const p=el("div","piste"),f=el("div","remplissage",fr1(b.v)+" Md€");
+        f.style.width="2%";p.appendChild(f);l.appendChild(p);jauge.appendChild(l);
+        requestAnimationFrame(()=>{f.style.width=(b.v/15*100).toFixed(1)+"%";});
+      });
+      jauge.appendChild(el("p","chute","Soit une baisse d’environ 85 % du chiffre d’affaires."));
+      box.appendChild(jauge);
+      return pts;
+    }};
+  return api;
+}
+
+function blocTags(r){
+  const sel=new Set(),btns=[],ul=el("ul","tags");
+  const cpt=el("p","compteur-tags");
+  r.items.forEach((it,k)=>{
+    const li=el("li"),b=el("button","chip",it.t);
+    b.type="button";b.setAttribute("aria-pressed","false");
+    b.addEventListener("click",()=>{
+      sel.has(k)?sel.delete(k):sel.add(k);
+      b.setAttribute("aria-pressed",sel.has(k)?"true":"false");
+      maj();api.onChange();
+    });
+    btns.push(b);li.appendChild(b);ul.appendChild(li);
+  });
+  function maj(){cpt.textContent=sel.size+" sélectionnée"+(sel.size>1?"s":"")+" sur "+r.attendu+" attendues";}
+  maj();
+  const w=el("div");w.appendChild(ul);w.appendChild(cpt);
+  const api={noeud:w,onChange:()=>{},
+    pret:()=>sel.size===r.attendu,
+    corriger(){
+      let bons=0;
+      r.items.forEach((it,k)=>{
+        const pris=sel.has(k),juste=pris===it.ok;
+        if(juste)bons++;
+        btns[k].disabled=true;
+        btns[k].dataset.verdict=it.ok?"juste":(pris?"rate":"");
+        if(!it.ok&&!pris)btns[k].dataset.verdict="";
+      });
+      cpt.textContent="Les quatre bonnes réponses sont en vert.";
+      return r.max*bons/r.items.length;
+    }};
+  return api;
+}
+
+function blocChrono(r){
+  const ordre=r.items.map((_,k)=>k);
+  for(let i=ordre.length-1;i>0;i--){const j=(i*7+3)%(i+1);[ordre[i],ordre[j]]=[ordre[j],ordre[i]];}
+  if(ordre.every((v,i)=>v===i))ordre.reverse();
+  const ul=el("ul","chrono");
+  function dessiner(fige){
+    ul.textContent="";
+    ordre.forEach((idx,pos)=>{
+      const it=r.items[idx],li=el("li");
+      li.appendChild(el("span","rang",String(pos+1)));
+      const e=el("div","evt");
+      e.appendChild(el("b",null,it.d));
+      e.appendChild(el("span",null,it.t));
+      li.appendChild(e);
+      const f=el("div","fleches");
+      [["▲",-1],["▼",1]].forEach(([g,d])=>{
+        const b=el("button",null,g);b.type="button";
+        b.setAttribute("aria-label",(d<0?"Monter":"Descendre")+" : "+it.d);
+        b.disabled=fige||(d<0&&pos===0)||(d>0&&pos===ordre.length-1);
+        b.addEventListener("click",()=>{
+          [ordre[pos],ordre[pos+d]]=[ordre[pos+d],ordre[pos]];
+          dessiner(false);
+        });
+        f.appendChild(b);
+      });
+      li.appendChild(f);ul.appendChild(li);
+      if(fige)li.dataset.verdict=idx===pos?"juste":"rate";
+    });
+  }
+  dessiner(false);
+  return{noeud:ul,onChange:()=>{},pret:()=>true,
+    corriger(){
+      const bons=ordre.filter((idx,pos)=>idx===pos).length;
+      dessiner(true);
+      return r.max*bons/r.items.length;
+    }};
+}
+
+const FABRIQUES={qcm:blocQcm,tri:blocTri,curseurs:blocCurseurs,tags:blocTags,chrono:blocChrono};
+
+/* ====================== ÉCRAN RAYON ====================== */
+function rendreRayon(){
+  S.ecran="rayon";play.textContent="";
+  const r=RAYONS[S.i];
+  const c=el("section","carte");
+  const tete=el("div","carte-tete");
+  tete.appendChild(el("span","rayon-no","Rayon "+(S.i+1)+" sur "+RAYONS.length));
+  tete.appendChild(el("span","pts-max",r.max+" points"));
+  c.appendChild(tete);
+  c.appendChild(el("h2","",r.nom));
+  const cons=el("p","consigne");cons.innerHTML=r.consigne;
+  c.appendChild(cons);
+
+  const bloc=FABRIQUES[r.type](r);
+  c.appendChild(bloc.noeud);
+
+  const act=el("div","actions");
+  const valider=el("button","btn","Valider le rayon");
+  valider.type="button";valider.disabled=!bloc.pret();
+  const note=el("span","aide","");
+  bloc.onChange=()=>{valider.disabled=!bloc.pret();};
+  act.appendChild(valider);act.appendChild(note);
+  c.appendChild(act);
+  play.appendChild(c);
+
+  if(r.type==="tags")note.textContent="Sélectionnez exactement "+r.attendu+" étiquettes.";
+  else if(r.type==="tri")note.textContent="Chaque enseigne doit être classée.";
+  else if(r.type==="qcm")note.textContent="Cochez au moins une affirmation.";
+
+  valider.addEventListener("click",()=>{
+    const pts=Math.round(bloc.corriger());
+    S.resultats[S.i]={pts:pts,max:r.max};
+    valider.remove();note.remove();
+
+    const cor=el("div","correction");
+    cor.appendChild(el("h3","","Correction"));
+    const sc=el("p","score-rayon");
+    sc.appendChild(document.createTextNode(fr(pts)+" / "+r.max+" points  "));
+    sc.appendChild(el("i",null,pts===r.max?"— sans faute":pts>=r.max/2?"— l’essentiel est là":"— à revoir"));
+    cor.appendChild(sc);
+    const p=el("p");p.innerHTML=r.correction;cor.appendChild(p);
+    const rp=el("p","repere");
+    rp.appendChild(el("b","intitule","Repère pour votre dossier"));
+    const sp=document.createElement("span");sp.innerHTML=r.repere;rp.appendChild(sp);
+    cor.appendChild(rp);
+    c.appendChild(cor);
+
+    const suite=el("div","actions");
+    const b=el("button","btn rouge",S.i<RAYONS.length-1?"Rayon suivant":"Éditer la fiche");
+    b.type="button";
+    b.addEventListener("click",()=>{
+      if(S.i<RAYONS.length-1){S.i++;rendreRayon();window.scrollTo({top:0,behavior:"smooth"});}
+      else rendreFiche();
+    });
+    suite.appendChild(b);
+    c.appendChild(suite);
+    rendreGondole();rendreTicket();
+    b.focus();
+  });
+
+  rendreGondole();rendreTicket();
+}
+
+/* ====================== FICHE FINALE ====================== */
+function rubrique(titre,contenu){
+  const d=el("dl","rub");
+  d.appendChild(el("dt",null,titre));
+  const dd=el("dd");
+  if(typeof contenu==="string")dd.innerHTML=contenu;else dd.appendChild(contenu);
+  d.appendChild(dd);return d;
+}
+function listeEnseignes(noms,sortante){
+  const ul=el("ul","liste-enseignes"+(sortante?" sortante":""));
+  noms.forEach(n=>ul.appendChild(el("li",null,n)));
+  return ul;
+}
+function rendreFiche(){
+  S.ecran="fiche";play.textContent="";
+  const t=totalPts(),m=mentionDe(t);
+  const c=el("section","carte");
+
+  if(!S.revision){
+    c.appendChild(el("span","rayon-no","Ticket édité"));
+    const bilan=el("div","bilan");
+    const n=el("div","note-finale");
+    n.appendChild(document.createTextNode(String(t)));
+    n.appendChild(el("small",null," / 100"));
+    const g=el("div","grade");
+    g.appendChild(el("span",null,m.s));
+    g.appendChild(document.createTextNode(m.t));
+    bilan.appendChild(n);bilan.appendChild(g);
+    c.appendChild(bilan);
+    c.appendChild(el("p","consigne","Passage effectué en "+duree()+". Voici la fiche d’identité complète : elle reprend, rubrique par rubrique, ce que le jeu vient de vous faire retrouver."));
+  }else{
+    c.appendChild(el("span","rayon-no","Mode révision"));
+    c.appendChild(el("h2","","La fiche d’identité, en entier"));
+    c.appendChild(el("p","consigne","Lisez-la, refermez-la, puis lancez la partie pour vérifier ce qui est resté."));
+  }
+
+  const f=el("div","fiche");
+  f.appendChild(rubrique("Identité","<p><b>Groupe Casino</b> — enseigne française de la grande distribution alimentaire, aujourd’hui recentrée sur le commerce de proximité.</p>"));
+  f.appendChild(rubrique("Secteur d’activité","<p>Grande distribution alimentaire, commerce de détail. Le groupe vend directement au consommateur final, en magasin et en ligne.</p>"));
+  f.appendChild(rubrique("Positionnement","<p>Un positionnement stratégique <b>profondément transformé</b> : abandon d’un modèle multiformats pour un recentrage <b>exclusif sur le commerce de proximité</b> — magasins de quartier, de centre-ville et de village.</p>"));
+
+  const ens=el("div");
+  ens.appendChild(el("p",null,"Portefeuille avant 2024 :"));
+  ens.appendChild(listeEnseignes(["Géant","Monoprix","Casino","Franprix","Spar"],true));
+  const p2=el("p");p2.style.marginTop=".7rem";p2.textContent="Périmètre depuis 2025-2026 :";
+  ens.appendChild(p2);
+  ens.appendChild(listeEnseignes(["Cdiscount","Vival","Naturalia"],false));
+  f.appendChild(rubrique("Enseignes",ens));
+
+  const ca=el("div");
+  const duo=el("div","duo-ca");
+  [["2022-2023","9,4 Md€"],["2025","1,4 Md€"]].forEach(([lab,val])=>{
+    const w=el("div");w.appendChild(el("em",null,lab));w.appendChild(el("b",null,val));duo.appendChild(w);
+  });
+  const d3=el("div");d3.appendChild(el("em",null,"Évolution"));
+  const b3=el("b",null,"− 85 %");b3.className="delta";d3.appendChild(b3);duo.appendChild(d3);
+  ca.appendChild(duo);
+  const nca=el("p");nca.style.marginTop=".8rem";
+  nca.innerHTML="Une chute liée avant tout au <b>changement de périmètre</b> : les enseignes cédées ne sont plus consolidées dans les comptes du groupe.";
+  ca.appendChild(nca);
+  f.appendChild(rubrique("Chiffre d’affaires",ca));
+
+  f.appendChild(rubrique("Valeurs","<p><b>Intégrité, équité, honnêteté et qualité de service.</b> Un discours de confiance, adressé autant aux clients qu’aux salariés et aux partenaires financiers.</p>"));
+  f.appendChild(rubrique("Politique RSE","<p>Une démarche articulée autour de quatre piliers : <b>la proximité, le climat, la nutrition et les solidarités</b>. La proximité y est à la fois le modèle commercial et le premier engagement.</p>"));
+  f.appendChild(rubrique("Actualité et marché","<p>Fragilisé par une <b>crise ouverte en 2023</b>, le groupe engage une restructuration financière avec ses créanciers. Elle se concrétise en <b>mars 2024</b> par un passage officiel sous le contrôle de <b>nouveaux repreneurs</b>.</p><p>Depuis, le groupe conduit une profonde transformation stratégique et financière : cessions d’actifs, allègement de la dette et recentrage du réseau sur la proximité.</p>"));
+  c.appendChild(f);
+
+  const act=el("div","actions");
+  const rejouer=el("button","btn rouge",S.revision?"Passer en caisse":"Refaire un passage");
+  rejouer.type="button";
+  rejouer.addEventListener("click",()=>{
+    S.debut=Date.now();S.i=0;S.resultats=[];S.revision=false;
+    horodater();rendreRayon();window.scrollTo({top:0,behavior:"smooth"});
+  });
+  act.appendChild(rejouer);
+  const acc=el("button","btn creux","Retour à l’accueil");
+  acc.type="button";acc.addEventListener("click",()=>{S.resultats=[];S.revision=false;S.debut=null;rendreAccueil();});
+  act.appendChild(acc);
+  c.appendChild(act);
+  play.appendChild(c);
+  rendreGondole();rendreTicket();
+}
+
+horodater();
+rendreAccueil();
+})();
+</script>
+<!-- A4 -->
+</body>
+</html>
