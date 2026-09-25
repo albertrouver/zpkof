@@ -42,6 +42,7 @@ la symétrie entre positionnement commercial et premier pilier RSE).
 ```
 index.html          le jeu, autonome (HTML + CSS + JS en un seul fichier)
 outils/fragment.py  extrait de index.html la version publiable comme Artifact
+algator37/          ALGATOR37 — THE GAME, un autre jeu autonome (voir algator37/README.md)
 ```
 
 Les marqueurs `<!-- A1 -->` … `<!-- A4 -->` dans `index.html` délimitent ce que le script extrait :
