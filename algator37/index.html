@@ -14,6 +14,7 @@
    ALGATOR37 — THE GAME · STYLES
    ===================================================================== */
 :root{
+  color-scheme:dark;
   --bg:#06080d; --bg2:#0a0f18; --panel:#0d1420; --panel2:#132034; --panel3:#1a2a44;
   --line:#21314f; --line2:#30476f;
   --text:#eaf2ff; --muted:#93a6c7; --dim:#5f7192;
@@ -3006,12 +3007,7 @@ const Save = {
     this.save(true);
     return true;
   },
-  download() {
-    const blob = new Blob([this.exportJSON()], { type: 'application/json' });
-    const a = h('a', { href: URL.createObjectURL(blob), download: `algator37-sauvegarde-${todayKey()}.json` });
-    document.body.append(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  },
+  download() { offerDownload(`algator37-sauvegarde-${todayKey()}.json`, this.exportJSON()); },
 };
 /** Complète une sauvegarde (ancienne ou importée) avec les champs manquants */
 function normalizeState(st) {
@@ -6595,6 +6591,36 @@ function savePrefs() {
 function loadPrefs() {
   try { const o = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null'); if (o && typeof o === 'object') for (const k of PREF_KEYS) if (k in o) S.settings[k] = o[k]; } catch (e) { /* ignore */ }
 }
+// ---------- Téléchargements ----------
+// Publié sur claude.ai : capacité « downloads » (le visiteur confirme). Fichier local : lien classique.
+const MIME_BY_EXT = { json: 'application/json', png: 'image/png', jpg: 'image/jpeg' };
+function dataURLToBlob(url) {
+  const [head, b64] = url.split(','), type = (/data:([^;]+)/.exec(head) || [])[1] || 'application/octet-stream';
+  const bin = atob(b64), buf = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  return new Blob([buf], { type });
+}
+function offerDownload(filename, data) {
+  const cl = window.claude;
+  if (cl && typeof cl.use === 'function') {
+    const fail = () => toast('Téléchargement indisponible ici. Utilise « Copier », ou un appui long sur l’image pour l’enregistrer.', { icon: '⬇️', cls: 'red', dur: 5000 });
+    cl.use('downloads').then(dl => {
+      if (!dl) { fail(); return; }
+      dl.save({ filename, data }).then(() => toast(`Fichier prêt : ${filename}`, { icon: '⬇️', cls: 'cyan' }), err => {
+        const code = err && err.code;
+        if (code === 'declined') return;
+        if (code === 'rate_limited') toast('Une demande de téléchargement est déjà ouverte.', { icon: '⬇️' });
+        else fail();
+      });
+    }, fail);
+    return;
+  }
+  const ext = filename.split('.').pop();
+  const blob = typeof data === 'string' ? new Blob([data], { type: MIME_BY_EXT[ext] || 'text/plain' }) : data;
+  const a = h('a', { href: URL.createObjectURL(blob), download: filename });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
 function sanitizeName(v) {
   const n = String(v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9_]/g, '').slice(0, 12);
   return n || 'Algator37';
@@ -6830,7 +6856,7 @@ const Photo = {
   showShot(url) {
     const box = $('#photoShot'); box.innerHTML = '';
     const stamp = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '');
-    const a = h('a', { class: 'btn primary', href: url, download: `algator37-photo-${stamp}.png` }, '⬇️ Télécharger (PNG)');
+    const a = h('button', { class: 'btn primary', on: { click: () => offerDownload(`algator37-photo-${stamp}.png`, dataURLToBlob(url)) } }, '⬇️ Télécharger (PNG)');
     box.append(h('div', { class: 'mgcard' }, h('h2', null, '📸 Clic-clac !'), h('img', { src: url, alt: 'Photo prise en jeu' }),
       h('p', { class: 'muted', style: { fontSize: '13px' } }, 'La miniature est ajoutée à ton album (Galerie → Mes photos). Sur téléphone, un appui long sur l’image permet aussi de l’enregistrer.'),
       h('div', { class: 'btns' }, a, h('button', { class: 'btn', on: { click: () => box.classList.add('hidden') } }, '📷 Continuer'), h('button', { class: 'btn ghost', on: { click: () => this.close() } }, '✖ Quitter le mode photo'))));
@@ -6853,7 +6879,7 @@ function renderPhotoAlbum(body) {
   const g = h('div', { class: 'grid wide', style: { marginTop: '12px' } });
   list.forEach((ph, i) => g.append(h('div', { class: 'stat' }, h('img', { src: ph.d, alt: 'Photo', style: { width: '100%', borderRadius: '10px', display: 'block' } }),
     h('div', { class: 'muted', style: { fontSize: '12px', margin: '6px 0' } }, `${ZONES[ph.z] ? ZONES[ph.z].name : ''} · ${new Date(ph.t).toLocaleString('fr-FR')}`),
-    h('div', { class: 'row' }, h('a', { class: 'btn small', href: ph.d, download: `algator37-miniature-${ph.t}.jpg` }, '⬇️'),
+    h('div', { class: 'row' }, h('button', { class: 'btn small', title: 'Télécharger la miniature', on: { click: () => offerDownload(`algator37-miniature-${ph.t}.jpg`, dataURLToBlob(ph.d)) } }, '⬇️'),
       h('button', { class: 'btn small ghost', on: { click: () => { try { const l = Photo.album(); l.splice(i, 1); localStorage.setItem(PHOTO_KEY, JSON.stringify(l)); } catch (e) { /* ignore */ } Panel.refresh(true); } } }, '🗑️ Supprimer')))));
   body.append(g);
 }
@@ -7048,7 +7074,7 @@ const DailyCh = {
 };
 async function copyText(txt) {
   try { await navigator.clipboard.writeText(txt); toast('Copié dans le presse-papiers !', { icon: '📋' }); }
-  catch (e) { try { prompt('Copie ce texte :', txt); } catch (err) { toast('Copie impossible ici : sélectionne le code et copie-le à la main.', { icon: '📋' }); } }
+  catch (e) { toast('Copie automatique impossible ici : sélectionne le code affiché et copie-le à la main.', { icon: '📋', dur: 5000 }); }
 }
 
 // =====================================================================
