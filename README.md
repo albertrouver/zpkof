@@ -37,15 +37,25 @@ Chaque correction ajoute un « repère pour votre dossier » : la nuance d'analy
 (le changement de périmètre derrière la chute du chiffre d'affaires, la séquence d'une restructuration,
 la symétrie entre positionnement commercial et premier pilier RSE).
 
+## Aussi dans ce dépôt : Banger Party
+
+`banger-party/` contient un second jeu, sans rapport avec le Groupe Casino : treize micro-jeux de cinq
+secondes façon WarioWare, qui mélangent L'Empire Banger V3, Sharkz_29 Arcade et le Griffophone.
+Voir [`banger-party/README.md`](banger-party/README.md).
+
 ## Structure du dépôt
 
 ```
-index.html          le jeu, autonome (HTML + CSS + JS en un seul fichier)
-outils/fragment.py  extrait de index.html la version publiable comme Artifact
+index.html                le Ticket de Caisse Casino, autonome (HTML + CSS + JS en un seul fichier)
+banger-party/index.html   Banger Party, autonome lui aussi
+banger-party/README.md    les micro-jeux, la Team, les codes
+outils/fragment.py        extrait d'une page la version publiable comme Artifact
 ```
 
-Les marqueurs `<!-- A1 -->` … `<!-- A4 -->` dans `index.html` délimitent ce que le script extrait :
+Les marqueurs `<!-- A1 -->` … `<!-- A4 -->` dans chaque page délimitent ce que le script extrait :
 l'hôte des Artifacts fournit lui-même le squelette `<html>`/`<head>`/`<body>`.
+`python3 outils/fragment.py` traite le Ticket de Caisse, `python3 outils/fragment.py --jeu banger-party`
+traite Banger Party.
 
 ## Avertissement
 
