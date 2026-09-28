@@ -40,12 +40,23 @@ la symétrie entre positionnement commercial et premier pilier RSE).
 ## Structure du dépôt
 
 ```
-index.html          le jeu, autonome (HTML + CSS + JS en un seul fichier)
-outils/fragment.py  extrait de index.html la version publiable comme Artifact
+index.html               le jeu, autonome (HTML + CSS + JS en un seul fichier)
+outils/fragment.py       extrait de index.html la version publiable comme Artifact
+banger-boxe/index.html   mini-jeu « Banger Boxe » pour L'Empire Banger V3 (voir plus bas)
 ```
 
 Les marqueurs `<!-- A1 -->` … `<!-- A4 -->` dans `index.html` délimitent ce que le script extrait :
 l'hôte des Artifacts fournit lui-même le squelette `<html>`/`<head>`/`<body>`.
+
+## Banger Boxe
+
+Mini-jeu de boxe dans le style de L'Empire Banger V3 : on tape le sac (clic, doigt ou Espace), les coups
+rapides montent le combo, un coup sur vingt environ est un coup BANGER (×5 likes, ×3 dégâts), et chaque sac
+mis K.O. fait passer au round suivant, avec un sac en béton comme boss tous les cinq rounds. La boutique vend
+des gains par coup, des likes par seconde et la ceinture en or (×2). La progression est gardée dans le
+navigateur, et les likes par seconde continuent pendant l'absence (3 h au plus).
+
+Le fichier est autonome, photo comprise : on peut le déposer tel quel à côté du jeu principal.
 
 ## Avertissement
 
