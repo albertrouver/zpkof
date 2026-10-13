@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Algator37 : Le Marais</title>
+<style>
+  body{margin:0;background:#0d2614;color:#e8f5e1;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+  h1{margin:12px 0 4px;font-size:22px;color:#9be37a}
+  #info{font-size:14px;margin-bottom:8px;opacity:.85;text-align:center;padding:0 16px}
+  canvas{background:linear-gradient(#24502c,#163a1d);border:3px solid #9be37a;border-radius:10px;max-width:calc(100vw - 32px);touch-action:none}
+</style>
+</head>
+<body>
+<h1>🐊 Algator37 : Le Marais</h1>
+<div id="info">Flèches ← → ou glisse le doigt. Attrape les 🪙, évite les 🐊. Clique pour commencer.</div>
+<canvas id="c" width="480" height="640"></canvas>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+const img=new Image();img.src='perso.webp';
+let p,items,score,vies,t,etat='menu',keys={},best=+(localStorage.getItem('algBest')||0);
+function reset(){p={x:W/2,y:H-70,r:38};items=[];score=0;vies=3;t=0;etat='jeu'}
+addEventListener('keydown',e=>{keys[e.key]=1;if(etat!=='jeu'&&(e.key===' '||e.key==='Enter'))reset()});
+addEventListener('keyup',e=>keys[e.key]=0);
+function moveTo(e){const r=cv.getBoundingClientRect();p&&(p.x=(e.clientX-r.left)*W/r.width)}
+cv.addEventListener('pointerdown',e=>{if(etat!=='jeu')reset();moveTo(e)});
+cv.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType!=='mouse')moveTo(e)});
+function spawn(){const croco=Math.random()<.35+Math.min(t/6000,.3);
+  items.push({x:20+Math.random()*(W-40),y:-30,v:2+Math.random()*2+t/900,c:croco})}
+function loop(){
+  ctx.clearRect(0,0,W,H);
+  // nénuphars décoratifs
+  ctx.fillStyle='#2f6b38';for(let i=0;i<6;i++){ctx.beginPath();ctx.ellipse((i*97+t*.3)%W,(i*131)%H,26,12,0,0,7);ctx.fill()}
+  if(etat==='jeu'){
+    t++;if(keys.ArrowLeft)p.x-=7;if(keys.ArrowRight)p.x+=7;p.x=Math.max(p.r,Math.min(W-p.r,p.x));
+    if(t%Math.max(14,40-t/120|0)===0)spawn();
+    for(const it of items){it.y+=it.v;
+      if(Math.hypot(it.x-p.x,it.y-p.y)<p.r+18){it.y=H+99;if(it.c){vies--;if(vies<=0){etat='fin';best=Math.max(best,score);try{localStorage.setItem('algBest',best)}catch(e){}}}else score+=10}}
+    items=items.filter(i=>i.y<H+40);
+  }
+  ctx.font='34px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const it of items)ctx.fillText(it.c?'🐊':'🪙',it.x,it.y);
+  if(p){ctx.save();ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.clip();
+    if(img.complete)ctx.drawImage(img,p.x-p.r*1.45,p.y-p.r*1.25,p.r*2.9,p.r*2.9);ctx.restore();
+    ctx.strokeStyle='#9be37a';ctx.lineWidth=3;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke()}
+  ctx.fillStyle='#e8f5e1';ctx.font='bold 20px system-ui';ctx.textAlign='left';
+  ctx.fillText('Score : '+score,12,24);ctx.textAlign='right';ctx.fillText('❤️'.repeat(Math.max(vies||0,0))+'  Record : '+best,W-12,24);
+  if(etat!=='jeu'){ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,H/2-80,W,160);ctx.fillStyle='#9be37a';ctx.textAlign='center';
+    ctx.font='bold 30px system-ui';ctx.fillText(etat==='menu'?'Algator37 : Le Marais':'Croqué ! Score : '+score,W/2,H/2-20);
+    ctx.font='18px system-ui';ctx.fillStyle='#e8f5e1';ctx.fillText('Clique ou appuie sur Espace pour jouer',W/2,H/2+25)}
+  requestAnimationFrame(loop)}
+loop();
+</script>
+</body>
+</html>
