@@ -1,519 +1,372 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algator37 - Le Jeu</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algator37 Clicker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1d3b1f;
+  --panel: #f4ecd8;
+  --ink: #1a1a1a;
+  --croc: #5cb85c;
+  --yellow: #ffd23f;
+  --red: #e94f37;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(rgba(255,255,255,.07) 2px, transparent 2px);
+  background-size: 22px 22px;
+  font-family: 'Space Mono', monospace;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 16px;
+}
+.wrap { max-width: 900px; margin: 0 auto; }
+header { text-align: center; margin: 8px 0 18px; }
+header h1 {
+  font-family: 'Bungee', sans-serif;
+  font-size: clamp(28px, 7vw, 52px);
+  color: var(--yellow);
+  text-shadow: 4px 4px 0 var(--ink);
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+header p { color: #cfe8cf; font-size: 13px; margin-top: 4px; }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
+.box {
+  background: var(--panel);
+  border: 4px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  padding: 16px;
+}
 
-        h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
+#zone { position: relative; text-align: center; overflow: hidden; min-height: 420px; }
+.score { font-family: 'Bungee', sans-serif; font-size: 40px; line-height: 1; }
+.score-sub { font-size: 13px; margin-top: 4px; }
+.rang {
+  display: inline-block; margin-top: 10px; padding: 2px 10px;
+  background: var(--ink); color: var(--yellow); font-size: 12px; font-weight: 700;
+  transform: rotate(1deg);
+}
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 0.9em;
-        }
+#croc {
+  width: 230px; max-width: 80%; margin: 18px auto 0; display: block;
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  transition: transform .08s;
+}
+#croc:hover { transform: rotate(-3deg); }
+#croc.chomp { animation: chomp .14s; }
+@keyframes chomp {
+  50% { transform: scale(1.1, .88); }
+}
+.hint { font-size: 12px; opacity: .6; margin-top: 6px; }
 
-        .score-display {
-            background: #f0f0f0;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
+.pop {
+  position: absolute; pointer-events: none;
+  font-family: 'Bungee', sans-serif; font-size: 20px;
+  color: var(--yellow); -webkit-text-stroke: 1.5px var(--ink);
+  animation: monte .9s ease-out forwards;
+}
+@keyframes monte { to { transform: translateY(-70px); opacity: 0; } }
 
-        .score-label {
-            color: #999;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
+#crepeDoree {
+  position: absolute; width: 58px; height: 58px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff3b0, #f2b43c 60%, #b8791d);
+  border: 3px solid var(--ink); cursor: pointer; display: none;
+  animation: tourne 2s linear infinite;
+}
+@keyframes tourne { 50% { transform: scale(1.15) rotate(20deg); } }
 
-        .score {
-            font-size: 3em;
-            color: #667eea;
-            font-weight: bold;
-        }
+h2 { font-family: 'Bungee', sans-serif; font-size: 20px; margin-bottom: 10px; }
+.item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: #fff; border: 3px solid var(--ink); padding: 8px;
+  margin-bottom: 8px; cursor: pointer; text-align: left;
+  font-family: inherit; color: inherit;
+  transition: transform .05s;
+}
+.item:hover:not(:disabled) { background: #fffbe6; transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+.item:active:not(:disabled) { transform: none; box-shadow: none; }
+.item:disabled { opacity: .45; cursor: not-allowed; }
+.item.cache { display: none; }
+.tag {
+  width: 38px; height: 38px; flex-shrink: 0; display: grid; place-items: center;
+  font-family: 'Bungee', sans-serif; font-size: 16px;
+  border: 3px solid var(--ink); background: var(--croc);
+}
+.item .infos { flex: 1; min-width: 0; }
+.item .nom { font-weight: 700; font-size: 14px; }
+.item .desc { font-size: 11px; opacity: .7; }
+.item .prix { font-weight: 700; font-size: 13px; text-align: right; }
+.item .nb { font-family: 'Bungee', sans-serif; font-size: 18px; min-width: 30px; text-align: right; }
 
-        .button-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            flex: 1;
-            padding: 12px;
-            font-size: 1em;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.1s, box-shadow 0.1s;
-            text-transform: uppercase;
-        }
-
-        button:active {
-            transform: scale(0.95);
-        }
-
-        .click-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 1.2em;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            cursor: pointer;
-            transition: all 0.1s;
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .click-btn:hover {
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .click-btn:active {
-            transform: scale(0.98);
-        }
-
-        .emoji {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-
-        .upgrade-btn {
-            background: #4CAF50;
-            color: white;
-            width: 100%;
-        }
-
-        .upgrade-btn:hover {
-            background: #45a049;
-        }
-
-        .upgrade-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .stats {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .stat-line {
-            margin: 5px 0;
-        }
-
-        .multiplier {
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .floating-text {
-            position: fixed;
-            pointer-events: none;
-            font-weight: bold;
-            color: #667eea;
-            animation: float-up 1s ease-out forwards;
-            font-size: 1.2em;
-        }
-
-        @keyframes float-up {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-60px);
-            }
-        }
-
-        .reset-btn {
-            background: #ff6b6b;
-            color: white;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .reset-btn:hover {
-            background: #ff5252;
-        }
-
-        .title-accent {
-            color: #764ba2;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            border-bottom: 2px solid #eee;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: #999;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .tab-btn.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .character-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .character {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #eee;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .character:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        .character span {
-            font-size: 2em;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .character p {
-            color: #666;
-            font-size: 0.85em;
-            margin: 0;
-        }
-
-        .bonus-display {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-    </style>
+#ticker {
+  margin-top: 16px; background: var(--ink); color: var(--yellow);
+  padding: 8px 12px; font-size: 13px; border: 4px solid var(--ink);
+}
+#toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  background: var(--red); color: #fff; border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink); padding: 10px 16px; font-weight: 700;
+  display: none; z-index: 10; max-width: calc(100% - 32px); text-align: center;
+}
+footer { text-align: center; margin-top: 14px; font-size: 11px; color: #9fc59f; }
+footer button {
+  background: none; border: none; color: #9fc59f; text-decoration: underline;
+  cursor: pointer; font-family: inherit; font-size: 11px;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>ALGATOR<span class="title-accent">37</span></h1>
-        <p class="subtitle">L'Empire Banger - Édition Clicker</p>
+<div class="wrap">
+  <header>
+    <h1>Algator37 Clicker</h1>
+    <p>clique sur le croco. achète des crêpes. deviens une légende du 37.</p>
+  </header>
 
-        <div class="score-display">
-            <div class="score-label">EMPIRE POINTS</div>
-            <div class="score" id="score">0</div>
-        </div>
+  <div class="grid">
+    <div class="box" id="zone">
+      <div class="score" id="score">0</div>
+      <div class="score-sub">crêpes · <span id="parSec">0</span>/sec</div>
+      <div class="rang" id="rang">têtard du 37</div>
 
-        <div id="bonus" class="bonus-display" style="display:none;">
-            <span id="bonusText">🎉 BONUS! x5 pendant 10s</span>
-        </div>
+      <svg id="croc" viewBox="0 0 220 200" aria-label="Algator le croco">
+        <circle cx="72" cy="78" r="26" fill="#5cb85c" stroke="#1a1a1a" stroke-width="5"/>
+        <circle cx="148" cy="78" r="26" fill="#5cb85c" stroke="#1a1a1a" stroke-width="5"/>
+        <path d="M78 52 Q110 8 142 52 Z" fill="#e94f37" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"/>
+        <rect x="128" y="45" width="56" height="11" rx="5" fill="#e94f37" stroke="#1a1a1a" stroke-width="4"/>
+        <text x="110" y="47" font-family="Bungee, sans-serif" font-size="17" text-anchor="middle" fill="#fff">37</text>
+        <rect x="24" y="86" width="172" height="100" rx="42" fill="#5cb85c" stroke="#1a1a1a" stroke-width="5"/>
+        <circle cx="72" cy="78" r="12" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
+        <circle cx="148" cy="78" r="12" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
+        <circle cx="75" cy="80" r="5" fill="#1a1a1a"/>
+        <circle cx="151" cy="80" r="5" fill="#1a1a1a"/>
+        <circle cx="94" cy="110" r="4" fill="#1a1a1a"/>
+        <circle cx="126" cy="110" r="4" fill="#1a1a1a"/>
+        <path d="M48 145 Q110 172 172 145" fill="none" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
+        <path d="M66 151 l6 -11 l6 13 Z M96 158 l6 -12 l6 13 Z M126 157 l6 -12 l6 12 Z M154 149 l5 -10 l5 11 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+      </svg>
+      <div class="hint">(oui, c'est moi)</div>
 
-        <button class="click-btn" id="clickBtn">
-            <div class="emoji" id="emoji">🐊</div>
-            <div>CLIQUE SUR ALGATOR!</div>
-        </button>
-
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="upgrades">Améliorations</button>
-            <button class="tab-btn" data-tab="perks">Personnages</button>
-        </div>
-
-        <div id="upgrades" class="tab-content active">
-            <div class="button-container">
-                <button class="upgrade-btn" id="upgrade1">
-                    👆 Force<br><span id="cost1">10 pts</span>
-                </button>
-                <button class="upgrade-btn" id="upgrade2">
-                    🚀 Multiplicateur<br><span id="cost2">50 pts</span>
-                </button>
-            </div>
-            <div class="button-container">
-                <button class="upgrade-btn" id="upgrade3">
-                    ⚡ Clic auto<br><span id="cost3">200 pts</span>
-                </button>
-                <button class="upgrade-btn" id="upgrade4">
-                    💰 Jackpot<br><span id="cost4">500 pts</span>
-                </button>
-            </div>
-        </div>
-
-        <div id="perks" class="tab-content" style="display:none;">
-            <div class="character-grid">
-                <div class="character">
-                    <span>🐊</span>
-                    <p>Algator</p>
-                </div>
-                <div class="character">
-                    <span>🦈</span>
-                    <p>Sharkz_29</p>
-                </div>
-                <div class="character">
-                    <span>👑</span>
-                    <p>Lagator</p>
-                </div>
-                <div class="character">
-                    <span>🎵</span>
-                    <p>Musicien</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="stats">
-            <div class="stat-line">💪 Force: <span class="multiplier" id="power">1</span></div>
-            <div class="stat-line">📈 Multiplicateur: <span class="multiplier" id="multiplier">x1</span></div>
-            <div class="stat-line">🤖 Clics auto/s: <span class="multiplier" id="autoclick">0</span></div>
-            <div class="stat-line">Niveau: <span class="multiplier" id="level">1</span></div>
-        </div>
-
-        <button class="reset-btn" id="resetBtn">🔄 RECOMMENCER</button>
+      <div id="crepeDoree" title="attrape-la !"></div>
     </div>
 
-    <script>
-        let score = 0;
-        let clickPower = 1;
-        let multiplier = 1;
-        let autoClickPower = 0;
-        let level = 1;
-        let upgradeCount = 0;
-        let bonusActive = false;
-        let bonusMultiplier = 1;
+    <div class="box">
+      <h2>La boutique</h2>
+      <div id="boutique"></div>
+    </div>
+  </div>
 
-        let upgrade1Cost = 10;
-        let upgrade2Cost = 50;
-        let upgrade3Cost = 200;
-        let upgrade4Cost = 500;
+  <div id="ticker">chargement du marais...</div>
 
-        const upgrade1BaseCost = 10;
-        const upgrade2BaseCost = 50;
-        const upgrade3BaseCost = 200;
-        const upgrade4BaseCost = 500;
+  <footer>
+    fait par Algator37 · <button id="reset">tout effacer</button>
+  </footer>
+</div>
 
-        const scoreDisplay = document.getElementById('score');
-        const clickBtn = document.getElementById('clickBtn');
-        const emoji = document.getElementById('emoji');
-        const resetBtn = document.getElementById('resetBtn');
-        const powerDisplay = document.getElementById('power');
-        const multiplierDisplay = document.getElementById('multiplier');
-        const autoClickDisplay = document.getElementById('autoclick');
-        const levelDisplay = document.getElementById('level');
-        const bonusDisplay = document.getElementById('bonus');
+<div id="toast"></div>
 
-        const emojis = ['🐊', '🎮', '🎵', '⚡', '🌟', '💰', '🔥', '👑', '🎪', '🚀'];
-        let emojiIndex = 0;
+<script>
+const ITEMS = [
+  { id: 'crepe',     tag: 'C',  nom: 'Crêpe',              desc: '+1 par clic',        base: 15,      clic: 1 },
+  { id: 'gaufre',    tag: 'G',  nom: 'Gaufre',             desc: '+1 par seconde',     base: 50,      sec: 1 },
+  { id: 'morito',    tag: 'M',  nom: 'Morito',             desc: '+8 par clic',        base: 400,     clic: 8 },
+  { id: 'tonton',    tag: 'T',  nom: 'Mon tonton',         desc: '+10 par seconde',    base: 1100,    sec: 10 },
+  { id: 'sharkz',    tag: 'S',  nom: 'Sharkz_29',          desc: '+50 par seconde',    base: 9000,    sec: 50 },
+  { id: 'harleen',   tag: 'H',  nom: 'Harleen le chat',    desc: 'clics x2 (max 5)',   base: 25000,   mult: 2, max: 5 },
+  { id: 'andalouse', tag: 'A',  nom: 'Ma belle Andalouse', desc: '+400 par seconde',   base: 120000,  sec: 400 },
+  { id: 'empire',    tag: 'EB', nom: "L'Empire Banger",    desc: '+2500 par seconde',  base: 1500000, sec: 2500 }
+];
 
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.getAttribute('data-tab');
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(tab).classList.add('active');
-            });
-        });
+const RANGS = [
+  [0, 'têtard du 37'],
+  [500, 'petit croco de Tours'],
+  [10000, "boss de l'Indre-et-Loire"],
+  [250000, 'légende TikTok'],
+  [5000000, 'empereur banger'],
+  [100000000, 'au-delà du 37']
+];
 
-        function updateDisplay() {
-            scoreDisplay.textContent = Math.floor(score);
-            powerDisplay.textContent = Math.floor(clickPower * multiplier);
-            multiplierDisplay.textContent = 'x' + multiplier;
-            autoClickDisplay.textContent = Math.floor(autoClickPower / 10);
-            levelDisplay.textContent = level;
+const PHRASES = [
+  'algator mange une crêpe. puis une gaufre. puis un morito.',
+  'mabiche4990 m\'a encore mis 7-1 sur rocket league',
+  'harleen dort sur le clavier, ne la dérangez pas',
+  'sharkz_29 prépare un build fight de fou',
+  'toi, toi, ma belle andalouse...',
+  'mon tonton est passé, il a laissé des crêpes',
+  'nouvelle vidéo bientôt (peut-être)',
+  'dédicace à toute la commu du discord',
+  'quand la musique est bonne, les crêpes sont bonnes',
+  'on vise le million de crêpes. minimum.'
+];
 
-            const buttons = ['upgrade1', 'upgrade2', 'upgrade3', 'upgrade4'];
-            const costs = [upgrade1Cost, upgrade2Cost, upgrade3Cost, upgrade4Cost];
+const SAVE_KEY = 'algator37-clicker';
+let etat = { crepes: 0, total: 0, owned: {} };
 
-            buttons.forEach((id, i) => {
-                document.getElementById(id).disabled = score < costs[i];
-                document.getElementById('cost' + (i + 1)).textContent = Math.floor(costs[i]) + ' pts';
-            });
-        }
+function charger() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if (s && typeof s.crepes === 'number') etat = { ...etat, ...s, owned: s.owned || {} };
+  } catch (e) {}
+}
+function sauver() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(etat)); } catch (e) {}
+}
 
-        function floatingText(text, x, y) {
-            const span = document.createElement('div');
-            span.className = 'floating-text';
-            span.textContent = text;
-            span.style.left = x + 'px';
-            span.style.top = y + 'px';
-            document.body.appendChild(span);
-            setTimeout(() => span.remove(), 1000);
-        }
+const nb = id => etat.owned[id] || 0;
+const prix = it => Math.ceil(it.base * Math.pow(1.15, nb(it.id)));
 
-        function activateBonus() {
-            if (!bonusActive && Math.random() < 0.05) {
-                bonusActive = true;
-                bonusMultiplier = 5;
-                bonusDisplay.style.display = 'block';
-                setTimeout(() => {
-                    bonusActive = false;
-                    bonusMultiplier = 1;
-                    bonusDisplay.style.display = 'none';
-                }, 10000);
-            }
-        }
+function parClic() {
+  let p = 1, m = 1;
+  ITEMS.forEach(it => {
+    if (it.clic) p += it.clic * nb(it.id);
+    if (it.mult) m *= Math.pow(it.mult, nb(it.id));
+  });
+  return p * m;
+}
+function parSeconde() {
+  return ITEMS.reduce((s, it) => s + (it.sec || 0) * nb(it.id), 0);
+}
 
-        clickBtn.addEventListener('click', (e) => {
-            activateBonus();
-            const points = (clickPower * multiplier * bonusMultiplier);
-            score += points;
+function fmt(n) {
+  n = Math.floor(n);
+  if (n < 1000) return String(n);
+  const u = ['k', 'M', 'Md', 'T', 'Qa'];
+  let i = -1;
+  while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; }
+  return n.toFixed(n < 10 ? 2 : n < 100 ? 1 : 0).replace('.', ',') + u[i];
+}
 
-            floatingText('+' + Math.floor(points), e.clientX, e.clientY);
+const $ = id => document.getElementById(id);
+const boutique = $('boutique');
+const boutons = {};
 
-            emojiIndex = (emojiIndex + 1) % emojis.length;
-            emoji.textContent = emojis[emojiIndex];
+ITEMS.forEach(it => {
+  const b = document.createElement('button');
+  b.className = 'item';
+  b.innerHTML = `
+    <div class="tag">${it.tag}</div>
+    <div class="infos"><div class="nom">${it.nom}</div><div class="desc">${it.desc}</div></div>
+    <div><div class="prix"></div><div class="nb"></div></div>`;
+  b.addEventListener('click', () => acheter(it));
+  boutique.appendChild(b);
+  boutons[it.id] = b;
+});
 
-            clickBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                clickBtn.style.transform = 'scale(1)';
-            }, 100);
+function acheter(it) {
+  const p = prix(it);
+  if (etat.crepes < p || (it.max && nb(it.id) >= it.max)) return;
+  etat.crepes -= p;
+  etat.owned[it.id] = nb(it.id) + 1;
+  if (nb(it.id) === 1) toast(`${it.nom} rejoint l'aventure !`);
+  maj();
+}
 
-            updateDisplay();
-        });
+function maj() {
+  $('score').textContent = fmt(etat.crepes);
+  $('parSec').textContent = fmt(parSeconde());
+  let r = RANGS[0][1];
+  RANGS.forEach(([seuil, nom]) => { if (etat.total >= seuil) r = nom; });
+  $('rang').textContent = r;
 
-        document.getElementById('upgrade1').addEventListener('click', () => {
-            if (score >= upgrade1Cost) {
-                score -= upgrade1Cost;
-                clickPower += 1;
-                upgradeCount++;
-                level = Math.floor(1 + upgradeCount / 3);
-                upgrade1Cost = upgrade1BaseCost * Math.pow(1.15, upgradeCount / 2);
-                updateDisplay();
-            }
-        });
+  ITEMS.forEach((it, i) => {
+    const b = boutons[it.id];
+    const plein = it.max && nb(it.id) >= it.max;
+    const precedent = i === 0 || nb(ITEMS[i - 1].id) > 0 || etat.total >= it.base * 0.5;
+    b.classList.toggle('cache', !precedent && nb(it.id) === 0);
+    b.disabled = plein || etat.crepes < prix(it);
+    b.querySelector('.prix').textContent = plein ? 'MAX' : fmt(prix(it));
+    b.querySelector('.nb').textContent = nb(it.id) || '';
+  });
+}
 
-        document.getElementById('upgrade2').addEventListener('click', () => {
-            if (score >= upgrade2Cost) {
-                score -= upgrade2Cost;
-                multiplier *= 1.5;
-                upgradeCount++;
-                level = Math.floor(1 + upgradeCount / 3);
-                upgrade2Cost = upgrade2BaseCost * Math.pow(1.2, Math.floor(upgradeCount / 2));
-                updateDisplay();
-            }
-        });
+function gagner(n) {
+  etat.crepes += n;
+  etat.total += n;
+}
 
-        document.getElementById('upgrade3').addEventListener('click', () => {
-            if (score >= upgrade3Cost) {
-                score -= upgrade3Cost;
-                autoClickPower += 1;
-                upgradeCount++;
-                level = Math.floor(1 + upgradeCount / 3);
-                upgrade3Cost = upgrade3BaseCost * Math.pow(1.25, Math.floor(upgradeCount / 3));
-                updateDisplay();
-            }
-        });
+const zone = $('zone');
+const croc = $('croc');
 
-        document.getElementById('upgrade4').addEventListener('click', () => {
-            if (score >= upgrade4Cost) {
-                score -= upgrade4Cost;
-                score += Math.floor(score * 0.5);
-                upgradeCount++;
-                level = Math.floor(1 + upgradeCount / 3);
-                upgrade4Cost = upgrade4BaseCost * Math.pow(1.3, Math.floor(upgradeCount / 3));
-                updateDisplay();
-            }
-        });
+function pop(texte, x, y) {
+  const el = document.createElement('div');
+  el.className = 'pop';
+  el.textContent = texte;
+  el.style.left = (x - 20) + 'px';
+  el.style.top = (y - 20) + 'px';
+  zone.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
 
-        // Auto-clic
-        setInterval(() => {
-            if (autoClickPower > 0) {
-                activateBonus();
-                const points = (autoClickPower / 10) * bonusMultiplier;
-                score += points;
-                updateDisplay();
-            }
-        }, 1000);
+croc.addEventListener('click', e => {
+  const n = parClic();
+  gagner(n);
+  const r = zone.getBoundingClientRect();
+  pop('+' + fmt(n), e.clientX - r.left, e.clientY - r.top);
+  croc.classList.remove('chomp');
+  void croc.offsetWidth;
+  croc.classList.add('chomp');
+  maj();
+});
 
-        resetBtn.addEventListener('click', () => {
-            if (confirm('Êtes-vous sûr? Tous vos progrès seront perdus.')) {
-                score = 0;
-                clickPower = 1;
-                multiplier = 1;
-                autoClickPower = 0;
-                level = 1;
-                upgradeCount = 0;
-                bonusActive = false;
-                bonusMultiplier = 1;
-                upgrade1Cost = upgrade1BaseCost;
-                upgrade2Cost = upgrade2BaseCost;
-                upgrade3Cost = upgrade3BaseCost;
-                upgrade4Cost = upgrade4BaseCost;
-                emojiIndex = 0;
-                emoji.textContent = '🐊';
-                bonusDisplay.style.display = 'none';
-                updateDisplay();
-            }
-        });
+let toastTimer;
+function toast(t) {
+  const el = $('toast');
+  el.textContent = t;
+  el.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.display = 'none'; }, 2600);
+}
 
-        updateDisplay();
-    </script>
+const doree = $('crepeDoree');
+function lancerCrepeDoree() {
+  const w = zone.clientWidth - 70, h = zone.clientHeight - 70;
+  doree.style.left = (10 + Math.random() * w) + 'px';
+  doree.style.top = (10 + Math.random() * h) + 'px';
+  doree.style.display = 'block';
+  setTimeout(() => { doree.style.display = 'none'; }, 6000);
+  setTimeout(lancerCrepeDoree, 40000 + Math.random() * 50000);
+}
+doree.addEventListener('click', e => {
+  const n = Math.max(parClic() * 30, parSeconde() * 60, 50);
+  gagner(n);
+  doree.style.display = 'none';
+  const r = zone.getBoundingClientRect();
+  pop('+' + fmt(n), e.clientX - r.left, e.clientY - r.top);
+  toast('CRÊPE DORÉE ! +' + fmt(n));
+  maj();
+});
+
+let derniere = 0;
+function phrase() {
+  let i;
+  do { i = Math.floor(Math.random() * PHRASES.length); } while (i === derniere && PHRASES.length > 1);
+  derniere = i;
+  $('ticker').textContent = '> ' + PHRASES[i];
+}
+
+$('reset').addEventListener('click', () => {
+  if (!confirm('Tout effacer ? Tes crêpes seront perdues pour toujours.')) return;
+  etat = { crepes: 0, total: 0, owned: {} };
+  sauver();
+  maj();
+});
+
+charger();
+maj();
+phrase();
+setInterval(() => { gagner(parSeconde() / 10); maj(); }, 100);
+setInterval(sauver, 5000);
+setInterval(phrase, 8000);
+setTimeout(lancerCrepeDoree, 30000);
+window.addEventListener('beforeunload', sauver);
+</script>
 </body>
 </html>
