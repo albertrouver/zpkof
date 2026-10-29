@@ -181,36 +181,157 @@
         .title-accent {
             color: #764ba2;
         }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #999;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .character {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #eee;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .character:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .character span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .character p {
+            color: #666;
+            font-size: 0.85em;
+            margin: 0;
+        }
+
+        .bonus-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>ALGATOR<span class="title-accent">37</span></h1>
-        <p class="subtitle">Clique pour gagner des points!</p>
+        <p class="subtitle">L'Empire Banger - Édition Clicker</p>
 
         <div class="score-display">
-            <div class="score-label">POINTS</div>
+            <div class="score-label">EMPIRE POINTS</div>
             <div class="score" id="score">0</div>
+        </div>
+
+        <div id="bonus" class="bonus-display" style="display:none;">
+            <span id="bonusText">🎉 BONUS! x5 pendant 10s</span>
         </div>
 
         <button class="click-btn" id="clickBtn">
             <div class="emoji" id="emoji">🐊</div>
-            <div>CLIQUE MOI!</div>
+            <div>CLIQUE SUR ALGATOR!</div>
         </button>
 
-        <div class="button-container">
-            <button class="upgrade-btn" id="upgrade1">
-                👆 +1/clic<br><span id="cost1">10 pts</span>
-            </button>
-            <button class="upgrade-btn" id="upgrade2">
-                🚀 x2<br><span id="cost2">50 pts</span>
-            </button>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="upgrades">Améliorations</button>
+            <button class="tab-btn" data-tab="perks">Personnages</button>
+        </div>
+
+        <div id="upgrades" class="tab-content active">
+            <div class="button-container">
+                <button class="upgrade-btn" id="upgrade1">
+                    👆 Force<br><span id="cost1">10 pts</span>
+                </button>
+                <button class="upgrade-btn" id="upgrade2">
+                    🚀 Multiplicateur<br><span id="cost2">50 pts</span>
+                </button>
+            </div>
+            <div class="button-container">
+                <button class="upgrade-btn" id="upgrade3">
+                    ⚡ Clic auto<br><span id="cost3">200 pts</span>
+                </button>
+                <button class="upgrade-btn" id="upgrade4">
+                    💰 Jackpot<br><span id="cost4">500 pts</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="perks" class="tab-content" style="display:none;">
+            <div class="character-grid">
+                <div class="character">
+                    <span>🐊</span>
+                    <p>Algator</p>
+                </div>
+                <div class="character">
+                    <span>🦈</span>
+                    <p>Sharkz_29</p>
+                </div>
+                <div class="character">
+                    <span>👑</span>
+                    <p>Lagator</p>
+                </div>
+                <div class="character">
+                    <span>🎵</span>
+                    <p>Musicien</p>
+                </div>
+            </div>
         </div>
 
         <div class="stats">
-            <div class="stat-line">Points par clic: <span class="multiplier" id="power">1</span></div>
-            <div class="stat-line">Multiplicateur: <span class="multiplier" id="multiplier">x1</span></div>
-            <div class="stat-line">Améliorations: <span class="multiplier" id="upgrades">0</span></div>
+            <div class="stat-line">💪 Force: <span class="multiplier" id="power">1</span></div>
+            <div class="stat-line">📈 Multiplicateur: <span class="multiplier" id="multiplier">x1</span></div>
+            <div class="stat-line">🤖 Clics auto/s: <span class="multiplier" id="autoclick">0</span></div>
+            <div class="stat-line">Niveau: <span class="multiplier" id="level">1</span></div>
         </div>
 
         <button class="reset-btn" id="resetBtn">🔄 RECOMMENCER</button>
@@ -220,36 +341,60 @@
         let score = 0;
         let clickPower = 1;
         let multiplier = 1;
+        let autoClickPower = 0;
+        let level = 1;
         let upgradeCount = 0;
+        let bonusActive = false;
+        let bonusMultiplier = 1;
+
         let upgrade1Cost = 10;
         let upgrade2Cost = 50;
+        let upgrade3Cost = 200;
+        let upgrade4Cost = 500;
+
         const upgrade1BaseCost = 10;
         const upgrade2BaseCost = 50;
+        const upgrade3BaseCost = 200;
+        const upgrade4BaseCost = 500;
 
         const scoreDisplay = document.getElementById('score');
         const clickBtn = document.getElementById('clickBtn');
         const emoji = document.getElementById('emoji');
-        const upgrade1Btn = document.getElementById('upgrade1');
-        const upgrade2Btn = document.getElementById('upgrade2');
         const resetBtn = document.getElementById('resetBtn');
         const powerDisplay = document.getElementById('power');
         const multiplierDisplay = document.getElementById('multiplier');
-        const upgradesDisplay = document.getElementById('upgrades');
+        const autoClickDisplay = document.getElementById('autoclick');
+        const levelDisplay = document.getElementById('level');
+        const bonusDisplay = document.getElementById('bonus');
 
-        const emojis = ['🐊', '🎮', '🎵', '⚡', '🌟', '💰', '🔥', '👑'];
+        const emojis = ['🐊', '🎮', '🎵', '⚡', '🌟', '💰', '🔥', '👑', '🎪', '🚀'];
         let emojiIndex = 0;
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tab).classList.add('active');
+            });
+        });
 
         function updateDisplay() {
             scoreDisplay.textContent = Math.floor(score);
-            powerDisplay.textContent = clickPower * multiplier;
+            powerDisplay.textContent = Math.floor(clickPower * multiplier);
             multiplierDisplay.textContent = 'x' + multiplier;
-            upgradesDisplay.textContent = upgradeCount;
+            autoClickDisplay.textContent = Math.floor(autoClickPower / 10);
+            levelDisplay.textContent = level;
 
-            upgrade1Btn.disabled = score < upgrade1Cost;
-            upgrade2Btn.disabled = score < upgrade2Cost;
+            const buttons = ['upgrade1', 'upgrade2', 'upgrade3', 'upgrade4'];
+            const costs = [upgrade1Cost, upgrade2Cost, upgrade3Cost, upgrade4Cost];
 
-            document.getElementById('cost1').textContent = Math.floor(upgrade1Cost) + ' pts';
-            document.getElementById('cost2').textContent = Math.floor(upgrade2Cost) + ' pts';
+            buttons.forEach((id, i) => {
+                document.getElementById(id).disabled = score < costs[i];
+                document.getElementById('cost' + (i + 1)).textContent = Math.floor(costs[i]) + ' pts';
+            });
         }
 
         function floatingText(text, x, y) {
@@ -262,11 +407,25 @@
             setTimeout(() => span.remove(), 1000);
         }
 
+        function activateBonus() {
+            if (!bonusActive && Math.random() < 0.05) {
+                bonusActive = true;
+                bonusMultiplier = 5;
+                bonusDisplay.style.display = 'block';
+                setTimeout(() => {
+                    bonusActive = false;
+                    bonusMultiplier = 1;
+                    bonusDisplay.style.display = 'none';
+                }, 10000);
+            }
+        }
+
         clickBtn.addEventListener('click', (e) => {
-            const points = clickPower * multiplier;
+            activateBonus();
+            const points = (clickPower * multiplier * bonusMultiplier);
             score += points;
 
-            floatingText('+' + points, e.clientX, e.clientY);
+            floatingText('+' + Math.floor(points), e.clientX, e.clientY);
 
             emojiIndex = (emojiIndex + 1) % emojis.length;
             emoji.textContent = emojis[emojiIndex];
@@ -279,36 +438,77 @@
             updateDisplay();
         });
 
-        upgrade1Btn.addEventListener('click', () => {
+        document.getElementById('upgrade1').addEventListener('click', () => {
             if (score >= upgrade1Cost) {
                 score -= upgrade1Cost;
                 clickPower += 1;
                 upgradeCount++;
+                level = Math.floor(1 + upgradeCount / 3);
                 upgrade1Cost = upgrade1BaseCost * Math.pow(1.15, upgradeCount / 2);
                 updateDisplay();
             }
         });
 
-        upgrade2Btn.addEventListener('click', () => {
+        document.getElementById('upgrade2').addEventListener('click', () => {
             if (score >= upgrade2Cost) {
                 score -= upgrade2Cost;
-                multiplier *= 2;
+                multiplier *= 1.5;
                 upgradeCount++;
+                level = Math.floor(1 + upgradeCount / 3);
                 upgrade2Cost = upgrade2BaseCost * Math.pow(1.2, Math.floor(upgradeCount / 2));
                 updateDisplay();
             }
         });
 
+        document.getElementById('upgrade3').addEventListener('click', () => {
+            if (score >= upgrade3Cost) {
+                score -= upgrade3Cost;
+                autoClickPower += 1;
+                upgradeCount++;
+                level = Math.floor(1 + upgradeCount / 3);
+                upgrade3Cost = upgrade3BaseCost * Math.pow(1.25, Math.floor(upgradeCount / 3));
+                updateDisplay();
+            }
+        });
+
+        document.getElementById('upgrade4').addEventListener('click', () => {
+            if (score >= upgrade4Cost) {
+                score -= upgrade4Cost;
+                score += Math.floor(score * 0.5);
+                upgradeCount++;
+                level = Math.floor(1 + upgradeCount / 3);
+                upgrade4Cost = upgrade4BaseCost * Math.pow(1.3, Math.floor(upgradeCount / 3));
+                updateDisplay();
+            }
+        });
+
+        // Auto-clic
+        setInterval(() => {
+            if (autoClickPower > 0) {
+                activateBonus();
+                const points = (autoClickPower / 10) * bonusMultiplier;
+                score += points;
+                updateDisplay();
+            }
+        }, 1000);
+
         resetBtn.addEventListener('click', () => {
-            if (confirm('Êtes-vous sûr? Vos points seront perdus.')) {
+            if (confirm('Êtes-vous sûr? Tous vos progrès seront perdus.')) {
                 score = 0;
                 clickPower = 1;
                 multiplier = 1;
+                autoClickPower = 0;
+                level = 1;
                 upgradeCount = 0;
+                bonusActive = false;
+                bonusMultiplier = 1;
                 upgrade1Cost = upgrade1BaseCost;
                 upgrade2Cost = upgrade2BaseCost;
+                upgrade3Cost = upgrade3BaseCost;
+                upgrade4Cost = upgrade4BaseCost;
                 emojiIndex = 0;
                 emoji.textContent = '🐊';
+                bonusDisplay.style.display = 'none';
                 updateDisplay();
             }
         });
