@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algator37 - Le Jeu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .score-display {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .score-label {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .score {
+            font-size: 3em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s, box-shadow 0.1s;
+            text-transform: uppercase;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .click-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.2em;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.1s;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .click-btn:hover {
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .click-btn:active {
+            transform: scale(0.98);
+        }
+
+        .emoji {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-btn {
+            background: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+
+        .upgrade-btn:hover {
+            background: #45a049;
+        }
+
+        .upgrade-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .stats {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stat-line {
+            margin: 5px 0;
+        }
+
+        .multiplier {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .floating-text {
+            position: fixed;
+            pointer-events: none;
+            font-weight: bold;
+            color: #667eea;
+            animation: float-up 1s ease-out forwards;
+            font-size: 1.2em;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px);
+            }
+        }
+
+        .reset-btn {
+            background: #ff6b6b;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+        }
+
+        .title-accent {
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ALGATOR<span class="title-accent">37</span></h1>
+        <p class="subtitle">Clique pour gagner des points!</p>
+
+        <div class="score-display">
+            <div class="score-label">POINTS</div>
+            <div class="score" id="score">0</div>
+        </div>
+
+        <button class="click-btn" id="clickBtn">
+            <div class="emoji" id="emoji">🐊</div>
+            <div>CLIQUE MOI!</div>
+        </button>
+
+        <div class="button-container">
+            <button class="upgrade-btn" id="upgrade1">
+                👆 +1/clic<br><span id="cost1">10 pts</span>
+            </button>
+            <button class="upgrade-btn" id="upgrade2">
+                🚀 x2<br><span id="cost2">50 pts</span>
+            </button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-line">Points par clic: <span class="multiplier" id="power">1</span></div>
+            <div class="stat-line">Multiplicateur: <span class="multiplier" id="multiplier">x1</span></div>
+            <div class="stat-line">Améliorations: <span class="multiplier" id="upgrades">0</span></div>
+        </div>
+
+        <button class="reset-btn" id="resetBtn">🔄 RECOMMENCER</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let clickPower = 1;
+        let multiplier = 1;
+        let upgradeCount = 0;
+        let upgrade1Cost = 10;
+        let upgrade2Cost = 50;
+        const upgrade1BaseCost = 10;
+        const upgrade2BaseCost = 50;
+
+        const scoreDisplay = document.getElementById('score');
+        const clickBtn = document.getElementById('clickBtn');
+        const emoji = document.getElementById('emoji');
+        const upgrade1Btn = document.getElementById('upgrade1');
+        const upgrade2Btn = document.getElementById('upgrade2');
+        const resetBtn = document.getElementById('resetBtn');
+        const powerDisplay = document.getElementById('power');
+        const multiplierDisplay = document.getElementById('multiplier');
+        const upgradesDisplay = document.getElementById('upgrades');
+
+        const emojis = ['🐊', '🎮', '🎵', '⚡', '🌟', '💰', '🔥', '👑'];
+        let emojiIndex = 0;
+
+        function updateDisplay() {
+            scoreDisplay.textContent = Math.floor(score);
+            powerDisplay.textContent = clickPower * multiplier;
+            multiplierDisplay.textContent = 'x' + multiplier;
+            upgradesDisplay.textContent = upgradeCount;
+
+            upgrade1Btn.disabled = score < upgrade1Cost;
+            upgrade2Btn.disabled = score < upgrade2Cost;
+
+            document.getElementById('cost1').textContent = Math.floor(upgrade1Cost) + ' pts';
+            document.getElementById('cost2').textContent = Math.floor(upgrade2Cost) + ' pts';
+        }
+
+        function floatingText(text, x, y) {
+            const span = document.createElement('div');
+            span.className = 'floating-text';
+            span.textContent = text;
+            span.style.left = x + 'px';
+            span.style.top = y + 'px';
+            document.body.appendChild(span);
+            setTimeout(() => span.remove(), 1000);
+        }
+
+        clickBtn.addEventListener('click', (e) => {
+            const points = clickPower * multiplier;
+            score += points;
+
+            floatingText('+' + points, e.clientX, e.clientY);
+
+            emojiIndex = (emojiIndex + 1) % emojis.length;
+            emoji.textContent = emojis[emojiIndex];
+
+            clickBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                clickBtn.style.transform = 'scale(1)';
+            }, 100);
+
+            updateDisplay();
+        });
+
+        upgrade1Btn.addEventListener('click', () => {
+            if (score >= upgrade1Cost) {
+                score -= upgrade1Cost;
+                clickPower += 1;
+                upgradeCount++;
+                upgrade1Cost = upgrade1BaseCost * Math.pow(1.15, upgradeCount / 2);
+                updateDisplay();
+            }
+        });
+
+        upgrade2Btn.addEventListener('click', () => {
+            if (score >= upgrade2Cost) {
+                score -= upgrade2Cost;
+                multiplier *= 2;
+                upgradeCount++;
+                upgrade2Cost = upgrade2BaseCost * Math.pow(1.2, Math.floor(upgradeCount / 2));
+                updateDisplay();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Êtes-vous sûr? Vos points seront perdus.')) {
+                score = 0;
+                clickPower = 1;
+                multiplier = 1;
+                upgradeCount = 0;
+                upgrade1Cost = upgrade1BaseCost;
+                upgrade2Cost = upgrade2BaseCost;
+                emojiIndex = 0;
+                emoji.textContent = '🐊';
+                updateDisplay();
+            }
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>
