@@ -2,319 +2,585 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Algator37 Clicker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>L'Empire Banger Mini</title>
+<meta name="theme-color" content="#07000d">
+<meta name="color-scheme" content="only light">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐊</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #1d3b1f;
-  --panel: #f4ecd8;
-  --ink: #1a1a1a;
-  --croc: #5cb85c;
-  --yellow: #ffd23f;
-  --red: #e94f37;
+  --bg: #07000d;
+  --panel: #1b1030;
+  --panel2: #261845;
+  --bord: #3a2766;
+  --texte: #f3eaff;
+  --doux: #a99bc9;
+  --jaune: #ffd60a;
+  --orange: #ff9f1c;
+  --vert: #2dc653;
+  --rose: #f72585;
+  --bleu: #4cc9f0;
+  --rouge: #e63946;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); }
 body {
-  background-color: var(--bg);
-  background-image: radial-gradient(rgba(255,255,255,.07) 2px, transparent 2px);
-  background-size: 22px 22px;
-  font-family: 'Space Mono', monospace;
-  color: var(--ink);
+  font-family: 'Nunito', sans-serif;
+  color: var(--texte);
   min-height: 100vh;
-  padding: 16px;
+  background: radial-gradient(ellipse at 50% -10%, #2a0a45 0%, var(--bg) 60%) fixed;
+  padding-bottom: 80px;
 }
-.wrap { max-width: 900px; margin: 0 auto; }
-header { text-align: center; margin: 8px 0 18px; }
-header h1 {
-  font-family: 'Bungee', sans-serif;
-  font-size: clamp(28px, 7vw, 52px);
-  color: var(--yellow);
-  text-shadow: 4px 4px 0 var(--ink);
-  transform: rotate(-2deg);
-  display: inline-block;
-}
-header p { color: #cfe8cf; font-size: 13px; margin-top: 4px; }
-
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
-
-.box {
-  background: var(--panel);
-  border: 4px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--ink);
-  padding: 16px;
+.bangers { font-family: 'Bangers', cursive; letter-spacing: 1px; }
+.dore {
+  background: linear-gradient(180deg, var(--jaune), var(--orange));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
-#zone { position: relative; text-align: center; overflow: hidden; min-height: 420px; }
-.score { font-family: 'Bungee', sans-serif; font-size: 40px; line-height: 1; }
-.score-sub { font-size: 13px; margin-top: 4px; }
-.rang {
-  display: inline-block; margin-top: 10px; padding: 2px 10px;
-  background: var(--ink); color: var(--yellow); font-size: 12px; font-weight: 700;
-  transform: rotate(1deg);
+/* barre du haut */
+.top {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 16px; background: rgba(7,0,13,.92);
+  border-bottom: 1px solid var(--bord);
 }
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo .titre { font-size: 26px; line-height: 1; }
+.logo small { display: block; font-size: 10px; letter-spacing: 3px; color: var(--doux); font-weight: 900; }
+.badge {
+  font-family: 'Bangers', cursive; font-size: 14px; padding: 1px 8px; border-radius: 99px;
+  background: linear-gradient(90deg, var(--rose), #7209b7); color: #fff;
+}
+.pills { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.pill {
+  background: var(--panel); border: 1px solid var(--bord); border-radius: 99px;
+  padding: 4px 12px; font-size: 13px; white-space: nowrap;
+}
+.pill b { font-family: 'Bangers', cursive; font-size: 17px; color: var(--jaune); letter-spacing: 1px; }
+
+/* colonnes */
+.cols {
+  display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 16px;
+  padding: 16px; max-width: 1300px; margin: 0 auto;
+}
+.carte {
+  background: var(--panel); border: 1px solid var(--bord); border-radius: 18px;
+  padding: 16px; position: relative;
+}
+@media (max-width: 900px) {
+  .cols { grid-template-columns: 1fr; }
+  body[data-onglet="clic"] #p-shop, body[data-onglet="clic"] #p-empire,
+  body[data-onglet="shop"] #p-clic, body[data-onglet="shop"] #p-empire,
+  body[data-onglet="empire"] #p-clic, body[data-onglet="empire"] #p-shop { display: none; }
+  .pills { margin-left: 0; }
+}
+
+/* zone de clic */
+#p-clic { text-align: center; overflow: hidden; }
+.compteur { font-size: 56px; line-height: 1; }
+.sous { color: var(--doux); font-weight: 700; }
+.vert { color: var(--vert); font-weight: 900; }
+.combo { display: flex; align-items: center; gap: 10px; margin: 14px 0 6px; }
+.combo span { font-size: 20px; min-width: 90px; text-align: left; }
+.barre { flex: 1; height: 8px; background: #000; border-radius: 99px; overflow: hidden; }
+.barre i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--jaune), var(--rose)); transition: width .15s; }
+.buffs { min-height: 26px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.buff { font-size: 12px; font-weight: 900; padding: 2px 10px; border-radius: 99px; background: var(--rose); }
 
 #croc {
-  width: 230px; max-width: 80%; margin: 18px auto 0; display: block;
-  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
-  transition: transform .08s;
+  width: 230px; height: 230px; margin: 10px auto; border-radius: 50%;
+  border: none; cursor: pointer; display: grid; place-items: center;
+  background: radial-gradient(circle, #ff7b00 0%, #8a1c00 45%, transparent 70%);
+  font-size: 140px; line-height: 1;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+  transition: transform .06s;
 }
-#croc:hover { transform: rotate(-3deg); }
-#croc.chomp { animation: chomp .14s; }
-@keyframes chomp {
-  50% { transform: scale(1.1, .88); }
-}
-.hint { font-size: 12px; opacity: .6; margin-top: 6px; }
+#croc:active { transform: scale(.93); }
+#croc img { width: 200px; height: 200px; object-fit: contain; pointer-events: none; }
 
 .pop {
-  position: absolute; pointer-events: none;
-  font-family: 'Bungee', sans-serif; font-size: 20px;
-  color: var(--yellow); -webkit-text-stroke: 1.5px var(--ink);
-  animation: monte .9s ease-out forwards;
+  position: absolute; pointer-events: none; font-family: 'Bangers', cursive; font-size: 24px;
+  color: var(--jaune); text-shadow: 2px 2px 0 #000; animation: monte .8s ease-out forwards;
 }
-@keyframes monte { to { transform: translateY(-70px); opacity: 0; } }
+@keyframes monte { to { transform: translateY(-80px); opacity: 0; } }
 
-#crepeDoree {
-  position: absolute; width: 58px; height: 58px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fff3b0, #f2b43c 60%, #b8791d);
-  border: 3px solid var(--ink); cursor: pointer; display: none;
-  animation: tourne 2s linear infinite;
+.flottant {
+  position: absolute; z-index: 3; font-size: 46px; cursor: pointer; border: none; background: none;
+  animation: flotte 1.6s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(255,214,10,.8));
 }
-@keyframes tourne { 50% { transform: scale(1.15) rotate(20deg); } }
+.flottant.douza { filter: drop-shadow(0 0 12px rgba(247,37,133,.9)); font-size: 54px; }
+@keyframes flotte { 50% { transform: translateY(-10px) rotate(8deg); } }
 
-h2 { font-family: 'Bungee', sans-serif; font-size: 20px; margin-bottom: 10px; }
+.niveau { margin-top: 12px; text-align: left; background: var(--panel2); border-radius: 12px; padding: 10px 12px; }
+.niveau .ligne { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+.niveau .ligne b { font-family: 'Bangers', cursive; font-size: 18px; color: var(--jaune); letter-spacing: 1px; }
+
+/* onglets et boutique */
+.onglets { display: flex; gap: 6px; margin-bottom: 10px; }
+.ong {
+  flex: 1; padding: 8px 4px; border-radius: 12px; border: 1px solid var(--bord);
+  background: var(--panel2); color: var(--doux); cursor: pointer;
+  font-family: 'Bangers', cursive; font-size: 17px; letter-spacing: 1px;
+}
+.ong.actif { background: linear-gradient(180deg, var(--rose), #7209b7); color: #fff; border-color: transparent; }
+.achat { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: var(--doux); font-size: 13px; font-weight: 900; }
+.achat button {
+  padding: 3px 10px; border-radius: 8px; border: 1px solid var(--bord); background: var(--panel2);
+  color: var(--texte); cursor: pointer; font-weight: 900;
+}
+.achat button.actif { background: var(--jaune); color: #000; }
+.liste { display: flex; flex-direction: column; gap: 8px; max-height: 62vh; overflow-y: auto; padding-right: 4px; }
 .item {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  background: #fff; border: 3px solid var(--ink); padding: 8px;
-  margin-bottom: 8px; cursor: pointer; text-align: left;
-  font-family: inherit; color: inherit;
-  transition: transform .05s;
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: var(--panel2); border: 1px solid var(--bord); border-radius: 12px;
+  padding: 8px 10px; color: var(--texte); cursor: pointer; font-family: inherit;
 }
-.item:hover:not(:disabled) { background: #fffbe6; transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
-.item:active:not(:disabled) { transform: none; box-shadow: none; }
+.item:hover:not(:disabled) { border-color: var(--jaune); }
 .item:disabled { opacity: .45; cursor: not-allowed; }
 .item.cache { display: none; }
-.tag {
-  width: 38px; height: 38px; flex-shrink: 0; display: grid; place-items: center;
-  font-family: 'Bungee', sans-serif; font-size: 16px;
-  border: 3px solid var(--ink); background: var(--croc);
-}
+.item .ico { font-size: 30px; width: 40px; text-align: center; }
 .item .infos { flex: 1; min-width: 0; }
-.item .nom { font-weight: 700; font-size: 14px; }
-.item .desc { font-size: 11px; opacity: .7; }
-.item .prix { font-weight: 700; font-size: 13px; text-align: right; }
-.item .nb { font-family: 'Bungee', sans-serif; font-size: 18px; min-width: 30px; text-align: right; }
+.item .nom { font-weight: 900; font-size: 15px; }
+.item .desc { font-size: 12px; color: var(--doux); }
+.item .prix { font-size: 13px; font-weight: 900; color: var(--jaune); }
+.item .nb { font-family: 'Bangers', cursive; font-size: 28px; color: var(--doux); min-width: 34px; text-align: right; }
 
-#ticker {
-  margin-top: 16px; background: var(--ink); color: var(--yellow);
-  padding: 8px 12px; font-size: 13px; border: 4px solid var(--ink);
+/* empire */
+#p-empire h3 { font-size: 22px; margin-bottom: 8px; }
+.bloc { background: var(--panel2); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.bloc p { font-size: 13px; color: var(--doux); margin-bottom: 8px; }
+.gros {
+  width: 100%; padding: 12px; border: none; border-radius: 12px; cursor: pointer;
+  font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 1px; color: #000;
+  background: linear-gradient(180deg, var(--jaune), var(--orange));
+  box-shadow: 0 4px 0 #b35f00;
 }
+.gros:disabled { filter: grayscale(1); opacity: .5; cursor: not-allowed; }
+.codes { border: 2px dashed var(--jaune); }
+.codes form { display: flex; gap: 8px; }
+.codes input {
+  flex: 1; min-width: 0; padding: 10px; border-radius: 10px; border: 2px solid var(--jaune);
+  background: #000; color: #fff; font-family: inherit; font-weight: 700; font-size: 15px;
+}
+.codes .gros { width: auto; padding: 10px 16px; }
+.stats div { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; border-bottom: 1px dashed var(--bord); }
+.stats b { color: var(--jaune); }
+.lien { background: none; border: none; color: var(--doux); text-decoration: underline; cursor: pointer; font-size: 12px; margin-top: 8px; }
+
+/* nav mobile */
+.nav {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 6;
+  background: #0d0518; border-top: 1px solid var(--bord);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav button {
+  flex: 1; background: none; border: none; color: var(--doux); padding: 8px 0 10px; cursor: pointer;
+  font-family: 'Bangers', cursive; font-size: 18px; letter-spacing: 1px;
+}
+.nav button span { display: block; font-size: 24px; }
+.nav button.actif { color: var(--jaune); }
+@media (max-width: 900px) { .nav { display: flex; } }
+
 #toast {
-  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
-  background: var(--red); color: #fff; border: 3px solid var(--ink);
-  box-shadow: 4px 4px 0 var(--ink); padding: 10px 16px; font-weight: 700;
-  display: none; z-index: 10; max-width: calc(100% - 32px); text-align: center;
-}
-footer { text-align: center; margin-top: 14px; font-size: 11px; color: #9fc59f; }
-footer button {
-  background: none; border: none; color: #9fc59f; text-decoration: underline;
-  cursor: pointer; font-family: inherit; font-size: 11px;
+  position: fixed; left: 50%; top: 80px; transform: translateX(-50%); z-index: 9;
+  background: var(--panel); border: 2px solid var(--jaune); border-radius: 14px;
+  padding: 10px 18px; font-weight: 900; display: none; text-align: center;
+  max-width: calc(100% - 32px); box-shadow: 0 0 30px rgba(255,214,10,.35);
 }
 </style>
 </head>
-<body>
-<div class="wrap">
-  <header>
-    <h1>Algator37 Clicker</h1>
-    <p>clique sur le croco. achète des crêpes. deviens une légende du 37.</p>
-  </header>
+<body data-onglet="clic">
 
-  <div class="grid">
-    <div class="box" id="zone">
-      <div class="score" id="score">0</div>
-      <div class="score-sub">crêpes · <span id="parSec">0</span>/sec</div>
-      <div class="rang" id="rang">têtard du 37</div>
-
-      <svg id="croc" viewBox="0 0 220 200" aria-label="Algator le croco">
-        <circle cx="72" cy="78" r="26" fill="#5cb85c" stroke="#1a1a1a" stroke-width="5"/>
-        <circle cx="148" cy="78" r="26" fill="#5cb85c" stroke="#1a1a1a" stroke-width="5"/>
-        <path d="M78 52 Q110 8 142 52 Z" fill="#e94f37" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"/>
-        <rect x="128" y="45" width="56" height="11" rx="5" fill="#e94f37" stroke="#1a1a1a" stroke-width="4"/>
-        <text x="110" y="47" font-family="Bungee, sans-serif" font-size="17" text-anchor="middle" fill="#fff">37</text>
-        <rect x="24" y="86" width="172" height="100" rx="42" fill="#5cb85c" stroke="#1a1a1a" stroke-width="5"/>
-        <circle cx="72" cy="78" r="12" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
-        <circle cx="148" cy="78" r="12" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
-        <circle cx="75" cy="80" r="5" fill="#1a1a1a"/>
-        <circle cx="151" cy="80" r="5" fill="#1a1a1a"/>
-        <circle cx="94" cy="110" r="4" fill="#1a1a1a"/>
-        <circle cx="126" cy="110" r="4" fill="#1a1a1a"/>
-        <path d="M48 145 Q110 172 172 145" fill="none" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
-        <path d="M66 151 l6 -11 l6 13 Z M96 158 l6 -12 l6 13 Z M126 157 l6 -12 l6 12 Z M154 149 l5 -10 l5 11 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
-      </svg>
-      <div class="hint">(oui, c'est moi)</div>
-
-      <div id="crepeDoree" title="attrape-la !"></div>
+<header class="top">
+  <div class="logo">
+    <span style="font-size:30px">🐊</span>
+    <div>
+      <div class="titre bangers dore">L'Empire Banger</div>
+      <small>MINI · PAR ALGATOR37</small>
     </div>
-
-    <div class="box">
-      <h2>La boutique</h2>
-      <div id="boutique"></div>
-    </div>
+    <span class="badge">MINI</span>
   </div>
+  <div class="pills">
+    <div class="pill">👍 <b id="h-likes">0</b></div>
+    <div class="pill">✨ <b id="h-etoiles">0</b> stars</div>
+    <div class="pill">🔁 <b id="h-prestiges">0</b> prestiges</div>
+    <div class="pill">⚡ x<b id="h-mult">1</b></div>
+  </div>
+</header>
 
-  <div id="ticker">chargement du marais...</div>
+<main class="cols">
+  <section class="carte" id="p-clic">
+    <div class="compteur bangers dore" id="likes">0</div>
+    <div class="sous">likes</div>
+    <div><span class="vert" id="parSec">0</span> <span class="vert">likes/s</span> <span class="sous">·</span> <span class="vert" id="parClic">1</span> <span class="vert">par clic</span></div>
 
-  <footer>
-    fait par Algator37 · <button id="reset">tout effacer</button>
-  </footer>
-</div>
+    <div class="combo">
+      <span class="bangers dore" id="comboTxt">COMBO x0</span>
+      <div class="barre"><i id="comboBarre"></i></div>
+    </div>
+    <div class="buffs" id="buffs"></div>
+
+    <button id="croc" aria-label="Clique sur Algator">
+      <img src="https://algator37.neocities.org/cliquemoi.gif" alt="" onerror="this.replaceWith('🐊')">
+    </button>
+
+    <div class="niveau">
+      <div class="ligne"><span>🎮 BlockStarPlanet</span><b id="bspNiv">Niv. 0/81</b></div>
+      <div class="barre"><i id="bspBarre"></i></div>
+    </div>
+  </section>
+
+  <section class="carte" id="p-shop">
+    <div class="onglets">
+      <button class="ong actif" data-liste="studio">🏭 Studio</button>
+      <button class="ong" data-liste="projets">💼 Projets</button>
+    </div>
+    <div class="achat">ACHETER
+      <button class="actif" data-n="1">x1</button>
+      <button data-n="10">x10</button>
+      <button data-n="100">x100</button>
+      <button data-n="max">MAX</button>
+    </div>
+    <div class="liste" id="l-studio"></div>
+    <div class="liste" id="l-projets" style="display:none"></div>
+  </section>
+
+  <section class="carte" id="p-empire">
+    <div class="bloc">
+      <h3 class="bangers dore">✨ Renaissance</h3>
+      <p>Monte BlockStarPlanet au Niv. 81 pour renaître. Tu perds tes likes, ton Studio et tes Projets, mais tu gagnes des stars : chaque star donne +5 % de production, pour toujours.</p>
+      <button class="gros" id="renaitre" disabled>RENAISSANCE (+0 ✨)</button>
+    </div>
+
+    <div class="bloc codes">
+      <h3 class="bangers dore">🎁 Codes secrets</h3>
+      <p>Essaie <b>banger37</b>. Les autres, faut les trouver.</p>
+      <form id="formCode">
+        <input id="code" placeholder="Entre un code..." autocomplete="off">
+        <button class="gros" type="submit">▶ OK</button>
+      </form>
+    </div>
+
+    <div class="bloc stats">
+      <h3 class="bangers dore">📊 Stats</h3>
+      <div><span>Likes cette vie</span><b id="s-vie">0</b></div>
+      <div><span>Likes au total</span><b id="s-total">0</b></div>
+      <div><span>Clics</span><b id="s-clics">0</b></div>
+      <div><span>Likes dorés attrapés</span><b id="s-dores">0</b></div>
+      <div><span>Douza chassé</span><b id="s-douza">0</b></div>
+      <div><span>Codes trouvés</span><b id="s-codes">0</b></div>
+      <button class="lien" id="reset">tout effacer</button>
+    </div>
+  </section>
+</main>
+
+<nav class="nav">
+  <button data-onglet="clic" class="actif"><span>🐊</span>Clic</button>
+  <button data-onglet="shop"><span>🏭</span>Shop</button>
+  <button data-onglet="empire"><span>👑</span>Empire</button>
+</nav>
 
 <div id="toast"></div>
 
 <script>
-const ITEMS = [
-  { id: 'crepe',     tag: 'C',  nom: 'Crêpe',              desc: '+1 par clic',        base: 15,      clic: 1 },
-  { id: 'gaufre',    tag: 'G',  nom: 'Gaufre',             desc: '+1 par seconde',     base: 50,      sec: 1 },
-  { id: 'morito',    tag: 'M',  nom: 'Morito',             desc: '+8 par clic',        base: 400,     clic: 8 },
-  { id: 'tonton',    tag: 'T',  nom: 'Mon tonton',         desc: '+10 par seconde',    base: 1100,    sec: 10 },
-  { id: 'sharkz',    tag: 'S',  nom: 'Sharkz_29',          desc: '+50 par seconde',    base: 9000,    sec: 50 },
-  { id: 'harleen',   tag: 'H',  nom: 'Harleen le chat',    desc: 'clics x2 (max 5)',   base: 25000,   mult: 2, max: 5 },
-  { id: 'andalouse', tag: 'A',  nom: 'Ma belle Andalouse', desc: '+400 par seconde',   base: 120000,  sec: 400 },
-  { id: 'empire',    tag: 'EB', nom: "L'Empire Banger",    desc: '+2500 par seconde',  base: 1500000, sec: 2500 }
+const STUDIO = [
+  { id: 'p1',  nom: 'Algaclick',            icone: '🐊', cout: 15,     prod: 0.1,   desc: 'Le clic automatique de base.' },
+  { id: 'p2',  nom: 'Bot Discord',          icone: '💬', cout: 100,    prod: 1,     desc: '150 membres qui spamment le bouton.' },
+  { id: 'p3',  nom: 'Compte Woulgator37',   icone: '🤝', cout: 1100,   prod: 8,     desc: 'La collab avec Wouldou67 tourne toute seule.' },
+  { id: 'p4',  nom: 'Farm PSN Trophées',    icone: '🏆', cout: 12000,  prod: 47,    desc: '3611 trophées, 87 Platine, et ça continue.' },
+  { id: 'p5',  nom: 'Cluster Steam',        icone: '🕹️', cout: 130000, prod: 260,   desc: '105 jeux qui tournent en boucle.' },
+  { id: 'p6',  nom: 'Chaîne YouTube',       icone: '📺', cout: 1.4e6,  prod: 1400,  desc: 'Les 900 vidéos travaillent pendant que tu dors.' },
+  { id: 'p7',  nom: 'Clans Clash Royale',   icone: '🏰', cout: 2e7,    prod: 7800,  desc: 'Les 5 clans, de la V1 à la V5.' },
+  { id: 'p8',  nom: 'Serveur Foot Algator', icone: '⚽', cout: 3.3e8,  prod: 44000, desc: 'Le jeu Roblox : 300 visites… par seconde.' },
+  { id: 'p9',  nom: 'Infinite Craft Top 1', icone: '🌍', cout: 5.1e9,  prod: 260000, desc: 'Chaque recette invente de nouveaux likes.' },
+  { id: 'p10', nom: 'Banger FM',            icone: '📻', cout: 7.5e10, prod: 1.6e6, desc: 'La radio de l\'Empire passe tes sons partout.' }
 ];
 
-const RANGS = [
-  [0, 'têtard du 37'],
-  [500, 'petit croco de Tours'],
-  [10000, "boss de l'Indre-et-Loire"],
-  [250000, 'légende TikTok'],
-  [5000000, 'empereur banger'],
-  [100000000, 'au-delà du 37']
-];
+const PROJETS = [
+  ['u1', 'Dédicace TikTok',     '📱', 'Le tout premier.'],
+  ['u2', 'Dessin Doggy',        '🐕', '« 2h à faire ce clébard »'],
+  ['u3', 'Coupe R9',            '⚽', 'Style Ronaldo Nazário'],
+  ['u4', 'T-shirt HogRider',    '🐗', 'Kendji + Lapin Crétin'],
+  ['u5', 'Wiki TikTok France',  '📖', 'Fondateur du wiki'],
+  ['u6', 'Top 1 Infinite Craft','🌍', 'Top mondial recettes'],
+  ['u7', 'Harleen',             '🐱', 'Le chat d\'Algator'],
+  ['u8', 'Serveur Discord',     '💬', '150 membres actifs'],
+  ['u9', '900 Vidéos YouTube',  '📺', 'Chaîne Algator37'],
+  ['u10','Record Mondial Peggle','🎯', 'Highscore planétaire']
+].map(([id, nom, icone, desc], k) => ({
+  id, nom, icone, desc,
+  cout: Math.round(100 * Math.pow(7, k)),
+  puissance: Math.round(Math.pow(2.5, k))
+}));
 
-const PHRASES = [
-  'algator mange une crêpe. puis une gaufre. puis un morito.',
-  'mabiche4990 m\'a encore mis 7-1 sur rocket league',
-  'harleen dort sur le clavier, ne la dérangez pas',
-  'sharkz_29 prépare un build fight de fou',
-  'toi, toi, ma belle andalouse...',
-  'mon tonton est passé, il a laissé des crêpes',
-  'nouvelle vidéo bientôt (peut-être)',
-  'dédicace à toute la commu du discord',
-  'quand la musique est bonne, les crêpes sont bonnes',
-  'on vise le million de crêpes. minimum.'
-];
+const CODES = {
+  banger37:  { txt: '+1 000 likes, bienvenue dans l\'Empire !', fx: () => gagner(1000) },
+  andalouse: { txt: 'Toi, toi, ma belle Andalouse ! Frénésie x7 pendant 77 s', fx: () => buff('frenesie', 77) },
+  harleen:   { txt: 'Harleen te ramène un paquet de likes 🐱', fx: () => gagner(Math.max(5000, parSec() * 600)) },
+  sharkz29:  { txt: 'AlgatorEtSharkz : clic x77 pendant 13 s 🦈', fx: () => buff('viral', 13) },
+  montonton: { txt: 'Mon tonton passe : combo bloqué au max 30 s', fx: () => { e.combo = COMBO_MAX; buff('fige', 30); } }
+};
 
-const SAVE_KEY = 'algator37-clicker';
-let etat = { crepes: 0, total: 0, owned: {} };
+const COMBO_MAX = 50;
+const SEUIL_BSP = 1e9;
+const CLE = 'empire_banger_mini';
 
+let e = nouvelEtat();
+function nouvelEtat() {
+  return { likes: 0, vie: 0, total: 0, clics: 0, studio: {}, projets: {}, etoiles: 0, prestiges: 0,
+           codes: [], dores: 0, douza: 0, combo: 0 };
+}
 function charger() {
   try {
-    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
-    if (s && typeof s.crepes === 'number') etat = { ...etat, ...s, owned: s.owned || {} };
-  } catch (e) {}
+    const s = JSON.parse(localStorage.getItem(CLE));
+    if (s && typeof s.likes === 'number') e = Object.assign(nouvelEtat(), s);
+  } catch (err) {}
 }
 function sauver() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(etat)); } catch (e) {}
+  try { localStorage.setItem(CLE, JSON.stringify(e)); } catch (err) {}
 }
 
-const nb = id => etat.owned[id] || 0;
-const prix = it => Math.ceil(it.base * Math.pow(1.15, nb(it.id)));
+const buffs = {};
+function buff(nom, sec) { buffs[nom] = Date.now() + sec * 1000; }
+const actif = nom => (buffs[nom] || 0) > Date.now();
 
+const nS = id => e.studio[id] || 0;
+const nP = id => e.projets[id] || 0;
+const multGlobal = () => 1 + 0.05 * e.etoiles;
+const multCombo = () => 1 + 0.02 * e.combo;
+
+function parSec() {
+  const base = STUDIO.reduce((s, b) => s + b.prod * nS(b.id), 0);
+  return base * multGlobal() * (actif('frenesie') ? 7 : 1);
+}
 function parClic() {
-  let p = 1, m = 1;
-  ITEMS.forEach(it => {
-    if (it.clic) p += it.clic * nb(it.id);
-    if (it.mult) m *= Math.pow(it.mult, nb(it.id));
-  });
-  return p * m;
-}
-function parSeconde() {
-  return ITEMS.reduce((s, it) => s + (it.sec || 0) * nb(it.id), 0);
+  const base = 1 + PROJETS.reduce((s, p) => s + p.puissance * nP(p.id), 0);
+  return base * multGlobal() * multCombo() * (actif('viral') ? 77 : 1);
 }
 
 function fmt(n) {
+  if (n < 10 && n % 1) return n.toFixed(1).replace('.', ',');
   n = Math.floor(n);
   if (n < 1000) return String(n);
-  const u = ['k', 'M', 'Md', 'T', 'Qa'];
+  const u = ['k', 'M', 'Md', 'T', 'Qa', 'Qi'];
   let i = -1;
   while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; }
-  return n.toFixed(n < 10 ? 2 : n < 100 ? 1 : 0).replace('.', ',') + u[i];
+  return n.toFixed(n < 10 ? 2 : n < 100 ? 1 : 0).replace('.', ',') + ' ' + u[i];
+}
+
+function gagner(n) { e.likes += n; e.vie += n; e.total += n; }
+
+/* achats */
+let modeAchat = 1;
+const RATIO_STUDIO = 1.15, RATIO_PROJET = 1.9;
+
+function coutLot(base, ratio, deja, n) {
+  return base * Math.pow(ratio, deja) * (Math.pow(ratio, n) - 1) / (ratio - 1);
+}
+function combien(base, ratio, deja) {
+  if (modeAchat !== 'max') return modeAchat;
+  const premier = base * Math.pow(ratio, deja);
+  return Math.max(1, Math.floor(Math.log(e.likes * (ratio - 1) / premier + 1) / Math.log(ratio)));
 }
 
 const $ = id => document.getElementById(id);
-const boutique = $('boutique');
-const boutons = {};
+const lignes = { studio: {}, projets: {} };
 
-ITEMS.forEach(it => {
-  const b = document.createElement('button');
-  b.className = 'item';
-  b.innerHTML = `
-    <div class="tag">${it.tag}</div>
-    <div class="infos"><div class="nom">${it.nom}</div><div class="desc">${it.desc}</div></div>
-    <div><div class="prix"></div><div class="nb"></div></div>`;
-  b.addEventListener('click', () => acheter(it));
-  boutique.appendChild(b);
-  boutons[it.id] = b;
-});
-
-function acheter(it) {
-  const p = prix(it);
-  if (etat.crepes < p || (it.max && nb(it.id) >= it.max)) return;
-  etat.crepes -= p;
-  etat.owned[it.id] = nb(it.id) + 1;
-  if (nb(it.id) === 1) toast(`${it.nom} rejoint l'aventure !`);
-  maj();
+function construireListe(type, items, ratio) {
+  const liste = $('l-' + type);
+  items.forEach(it => {
+    const b = document.createElement('button');
+    b.className = 'item';
+    b.innerHTML = `<div class="ico">${it.icone}</div>
+      <div class="infos"><div class="nom">${it.nom}</div><div class="desc">${it.desc}</div>
+      <div class="prix"></div></div><div class="nb"></div>`;
+    b.addEventListener('click', () => {
+      const possede = type === 'studio' ? nS(it.id) : nP(it.id);
+      const n = combien(it.cout, ratio, possede);
+      const prix = coutLot(it.cout, ratio, possede, n);
+      if (e.likes < prix) return;
+      e.likes -= prix;
+      e[type][it.id] = possede + n;
+      if (possede === 0) toast(`${it.icone} ${it.nom} débloqué !`);
+      maj();
+    });
+    liste.appendChild(b);
+    lignes[type][it.id] = b;
+  });
 }
+construireListe('studio', STUDIO, RATIO_STUDIO);
+construireListe('projets', PROJETS, RATIO_PROJET);
 
-function maj() {
-  $('score').textContent = fmt(etat.crepes);
-  $('parSec').textContent = fmt(parSeconde());
-  let r = RANGS[0][1];
-  RANGS.forEach(([seuil, nom]) => { if (etat.total >= seuil) r = nom; });
-  $('rang').textContent = r;
-
-  ITEMS.forEach((it, i) => {
-    const b = boutons[it.id];
-    const plein = it.max && nb(it.id) >= it.max;
-    const precedent = i === 0 || nb(ITEMS[i - 1].id) > 0 || etat.total >= it.base * 0.5;
-    b.classList.toggle('cache', !precedent && nb(it.id) === 0);
-    b.disabled = plein || etat.crepes < prix(it);
-    b.querySelector('.prix').textContent = plein ? 'MAX' : fmt(prix(it));
-    b.querySelector('.nb').textContent = nb(it.id) || '';
+function majListe(type, items, ratio) {
+  items.forEach((it, i) => {
+    const b = lignes[type][it.id];
+    const possede = type === 'studio' ? nS(it.id) : nP(it.id);
+    const n = combien(it.cout, ratio, possede);
+    const prix = coutLot(it.cout, ratio, possede, n);
+    const visible = possede > 0 || i === 0 || e.vie >= it.cout * 0.4 ||
+      (type === 'studio' ? nS(items[i - 1].id) : nP(items[i - 1].id)) > 0;
+    b.classList.toggle('cache', !visible);
+    b.disabled = e.likes < prix;
+    const gain = type === 'studio' ? `+${fmt(it.prod * n)}/s` : `+${fmt(it.puissance * n)} par clic`;
+    b.querySelector('.prix').textContent = `${n > 1 ? 'x' + n + ' · ' : ''}${fmt(prix)} 👍 · ${gain}`;
+    b.querySelector('.nb').textContent = possede || '';
   });
 }
 
-function gagner(n) {
-  etat.crepes += n;
-  etat.total += n;
-}
+/* Renaissance */
+function niveauBSP() { return Math.min(81, Math.floor(81 * Math.cbrt(e.vie / SEUIL_BSP))); }
+function etoilesAGagner() { return Math.floor(2 * Math.cbrt(e.vie / 1e8)); }
 
-const zone = $('zone');
-const croc = $('croc');
-
-function pop(texte, x, y) {
-  const el = document.createElement('div');
-  el.className = 'pop';
-  el.textContent = texte;
-  el.style.left = (x - 20) + 'px';
-  el.style.top = (y - 20) + 'px';
-  zone.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-croc.addEventListener('click', e => {
-  const n = parClic();
-  gagner(n);
-  const r = zone.getBoundingClientRect();
-  pop('+' + fmt(n), e.clientX - r.left, e.clientY - r.top);
-  croc.classList.remove('chomp');
-  void croc.offsetWidth;
-  croc.classList.add('chomp');
+$('renaitre').addEventListener('click', () => {
+  if (niveauBSP() < 81) return;
+  const gain = etoilesAGagner();
+  if (!confirm(`Renaître ? Tu gagnes ${gain} ✨ mais tu repars de zéro.`)) return;
+  e.etoiles += gain;
+  e.prestiges++;
+  e.likes = 0; e.vie = 0; e.studio = {}; e.projets = {}; e.combo = 0;
+  toast(`✨ RENAISSANCE ! +${gain} stars`);
   maj();
 });
+
+/* clic + combo */
+const zone = $('p-clic');
+let dernierClic = 0, clicsSeconde = [];
+
+function pop(txt, x, y) {
+  const el = document.createElement('div');
+  el.className = 'pop';
+  el.textContent = txt;
+  const r = zone.getBoundingClientRect();
+  el.style.left = (x - r.left - 20) + 'px';
+  el.style.top = (y - r.top - 20) + 'px';
+  zone.appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+$('croc').addEventListener('click', ev => {
+  const now = Date.now();
+  clicsSeconde = clicsSeconde.filter(t => now - t < 1000);
+  if (clicsSeconde.length >= 20) return;
+  clicsSeconde.push(now);
+  dernierClic = now;
+  e.combo = Math.min(COMBO_MAX, e.combo + 1);
+  e.clics++;
+  const n = parClic();
+  gagner(n);
+  pop('+' + fmt(n), ev.clientX, ev.clientY);
+  maj();
+});
+
+setInterval(() => {
+  if (actif('fige')) return;
+  if (e.combo > 0 && Date.now() - dernierClic > 1500) e.combo--;
+}, 1500);
+
+/* likes dorés et Douza */
+function placer(el) {
+  el.style.left = (20 + Math.random() * (zone.clientWidth - 90)) + 'px';
+  el.style.top = (60 + Math.random() * (zone.clientHeight - 160)) + 'px';
+  zone.appendChild(el);
+}
+
+function likeDore() {
+  const noir = Math.random() < 1 / 12;
+  const el = document.createElement('button');
+  el.className = 'flottant';
+  el.textContent = noir ? '🖤' : '💛';
+  placer(el);
+  const fin = setTimeout(() => el.remove(), 13000);
+  el.addEventListener('click', ev => {
+    clearTimeout(fin);
+    el.remove();
+    e.dores++;
+    if (noir) {
+      e.combo = 0;
+      const n = Math.max(parSec() * 120, parClic() * 50);
+      gagner(n);
+      toast(`🖤 Like noir : combo cassé, mais +${fmt(n)} likes`);
+    } else {
+      const r = Math.random();
+      if (r < 0.4) {
+        const n = Math.max(Math.min(e.likes * 0.15, parSec() * 900), parClic() * 77);
+        gagner(n);
+        toast(`💛 BUZZ ! +${fmt(n)} likes`);
+      } else if (r < 0.75) {
+        buff('frenesie', 77);
+        toast('💛 FRÉNÉSIE ! Production x7 pendant 77 s');
+      } else {
+        buff('viral', 13);
+        toast('💛 VIRAL ! Clic x77 pendant 13 s');
+      }
+    }
+    pop('💛', ev.clientX, ev.clientY);
+    maj();
+  });
+  setTimeout(likeDore, 30000 + Math.random() * 60000);
+}
+
+function douza() {
+  if (e.vie < 1000) { setTimeout(douza, 60000); return; }
+  const el = document.createElement('button');
+  el.className = 'flottant douza';
+  el.textContent = '😈';
+  el.title = 'Douza vole tes likes ! Clique-le 5 fois';
+  placer(el);
+  toast('😈 Douza arrive pour voler tes likes ! Clique-le 5 fois !');
+  let coups = 0;
+  const fin = setTimeout(() => {
+    el.remove();
+    const vol = Math.floor(e.likes * 0.1);
+    e.likes -= vol;
+    toast(`😈 Douza t'a volé ${fmt(vol)} likes...`);
+    maj();
+  }, 20000);
+  el.addEventListener('click', () => {
+    coups++;
+    placer(el);
+    if (coups >= 5) {
+      clearTimeout(fin);
+      el.remove();
+      e.douza++;
+      const n = Math.max(parSec() * 180, parClic() * 100);
+      gagner(n);
+      toast(`Douza a fui ! +${fmt(n)} likes`);
+      maj();
+    }
+  });
+  setTimeout(douza, 120000 + Math.random() * 120000);
+}
+
+/* codes secrets */
+$('formCode').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const c = $('code').value.trim().toLowerCase().replace(/\s+/g, '');
+  $('code').value = '';
+  if (!CODES[c]) { toast('❌ Code inconnu'); return; }
+  if (e.codes.includes(c)) { toast('Déjà utilisé, bien essayé 😏'); return; }
+  e.codes.push(c);
+  CODES[c].fx();
+  toast('🎁 ' + CODES[c].txt);
+  maj();
+});
+
+/* navigation */
+document.querySelectorAll('.ong').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.ong').forEach(x => x.classList.toggle('actif', x === b));
+  $('l-studio').style.display = b.dataset.liste === 'studio' ? '' : 'none';
+  $('l-projets').style.display = b.dataset.liste === 'projets' ? '' : 'none';
+}));
+document.querySelectorAll('.achat button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.achat button').forEach(x => x.classList.toggle('actif', x === b));
+  modeAchat = b.dataset.n === 'max' ? 'max' : Number(b.dataset.n);
+  maj();
+}));
+document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.nav button').forEach(x => x.classList.toggle('actif', x === b));
+  document.body.dataset.onglet = b.dataset.onglet;
+}));
 
 let toastTimer;
 function toast(t) {
@@ -322,51 +588,59 @@ function toast(t) {
   el.textContent = t;
   el.style.display = 'block';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.style.display = 'none'; }, 2600);
-}
-
-const doree = $('crepeDoree');
-function lancerCrepeDoree() {
-  const w = zone.clientWidth - 70, h = zone.clientHeight - 70;
-  doree.style.left = (10 + Math.random() * w) + 'px';
-  doree.style.top = (10 + Math.random() * h) + 'px';
-  doree.style.display = 'block';
-  setTimeout(() => { doree.style.display = 'none'; }, 6000);
-  setTimeout(lancerCrepeDoree, 40000 + Math.random() * 50000);
-}
-doree.addEventListener('click', e => {
-  const n = Math.max(parClic() * 30, parSeconde() * 60, 50);
-  gagner(n);
-  doree.style.display = 'none';
-  const r = zone.getBoundingClientRect();
-  pop('+' + fmt(n), e.clientX - r.left, e.clientY - r.top);
-  toast('CRÊPE DORÉE ! +' + fmt(n));
-  maj();
-});
-
-let derniere = 0;
-function phrase() {
-  let i;
-  do { i = Math.floor(Math.random() * PHRASES.length); } while (i === derniere && PHRASES.length > 1);
-  derniere = i;
-  $('ticker').textContent = '> ' + PHRASES[i];
+  toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3000);
 }
 
 $('reset').addEventListener('click', () => {
-  if (!confirm('Tout effacer ? Tes crêpes seront perdues pour toujours.')) return;
-  etat = { crepes: 0, total: 0, owned: {} };
+  if (!confirm('Tout effacer ? Likes, stars, prestiges... tout part.')) return;
+  e = nouvelEtat();
   sauver();
   maj();
 });
 
+/* affichage */
+function maj() {
+  $('likes').textContent = fmt(e.likes);
+  $('h-likes').textContent = fmt(e.likes);
+  $('h-etoiles').textContent = e.etoiles;
+  $('h-prestiges').textContent = e.prestiges;
+  $('h-mult').textContent = multGlobal().toFixed(2).replace('.', ',').replace(/,00$/, '');
+  $('parSec').textContent = fmt(parSec());
+  $('parClic').textContent = fmt(parClic());
+  $('comboTxt').textContent = 'COMBO x' + e.combo;
+  $('comboBarre').style.width = (e.combo / COMBO_MAX * 100) + '%';
+
+  const b = [];
+  if (actif('frenesie')) b.push('🔥 Frénésie x7');
+  if (actif('viral')) b.push('🚀 Viral x77');
+  if (actif('fige')) b.push('🧊 Combo bloqué');
+  $('buffs').innerHTML = b.map(t => `<span class="buff">${t}</span>`).join('');
+
+  const niv = niveauBSP();
+  $('bspNiv').textContent = `Niv. ${niv}/81`;
+  $('bspBarre').style.width = (niv / 81 * 100) + '%';
+  const r = $('renaitre');
+  r.disabled = niv < 81;
+  r.textContent = `RENAISSANCE (+${niv >= 81 ? etoilesAGagner() : 0} ✨)`;
+
+  majListe('studio', STUDIO, RATIO_STUDIO);
+  majListe('projets', PROJETS, RATIO_PROJET);
+
+  $('s-vie').textContent = fmt(e.vie);
+  $('s-total').textContent = fmt(e.total);
+  $('s-clics').textContent = e.clics;
+  $('s-dores').textContent = e.dores;
+  $('s-douza').textContent = e.douza;
+  $('s-codes').textContent = `${e.codes.length}/${Object.keys(CODES).length}`;
+}
+
 charger();
 maj();
-phrase();
-setInterval(() => { gagner(parSeconde() / 10); maj(); }, 100);
+setInterval(() => { gagner(parSec() / 10); maj(); }, 100);
 setInterval(sauver, 5000);
-setInterval(phrase, 8000);
-setTimeout(lancerCrepeDoree, 30000);
 window.addEventListener('beforeunload', sauver);
+setTimeout(likeDore, 20000);
+setTimeout(douza, 90000);
 </script>
 </body>
 </html>
